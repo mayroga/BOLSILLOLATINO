@@ -4,7 +4,7 @@
  <meta charset="UTF-8" /> 
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
  <title>BolsilloLatino - Sistema Central de Soluciones</title> 
- <link rel="stylesheet" href="/static/styles.css">
+ <link rel="stylesheet" href="/static/styles.css"> 
 </head> 
 <body> 
  <div id="main-container"> 
@@ -12,160 +12,148 @@
  <h2 style="color:var(--primary);">BolsilloLatino</h2> 
  <p class="small">Asesoría e Integración Total de Servicios Públicos y Corporativos • USA Suite</p> 
  </div> 
- 
  <div id="app"> 
- <!-- VENTANA LIMPIA QUE ESCONDE TODO EN PANTALLA MIENTRAS CORRE EL RELOJ DE PRECARGA -->
- <div id="pantallaApoyo" style="display: none; padding: 40px 10px; text-align: center;">
- <div class="spinner"></div>
- <h2 id="textoApoyo" style="color: var(--text); font-size: 22px; line-height: 1.6; font-weight: 500; margin-bottom: 20px;">
- Preparando tu conexión segura...
- </h2>
- <p style="color: var(--dim); font-size: 14px;">Espere un momento, por favor.</p>
- </div>
-
- <!-- CAJA DE ENTRADA INICIAL CON EL BOTON QUE ACTIVA TODO EN SECRETO -->
+ <!-- VENTANA LIMPIA QUE ESCONDE TODO EN PANTALLA MIENTRAS CORRE EL RELOJ DE PRECARGA --> 
+ <div id="pantallaApoyo" style="display: none; padding: 40px 10px; text-align: center;"> 
+ <div class="spinner"></div> 
+ <h2 id="textoApoyo" style="color: var(--text); font-size: 22px; line-height: 1.6; font-weight: 500; margin-bottom: 20px;"> Preparando tu conexión segura... </h2> 
+ <p style="color: var(--dim); font-size: 14px;">Espere un momento, por favor.</p> 
+ </div> 
+ <!-- CAJA DE ENTRADA INICIAL CON EL BOTON QUE ACTIVA TODO EN SECRETO --> 
  <div id="cargaInicial" class="card center"> 
  <h3>INITIALIZING SYSTEM...</h3> 
  <p>Sincronizando motores informativos de control. Por favor espere.</p> 
- <button onclick="iniciarDespertarYApoyo(event)" style="margin-top: 15px;">CONECTAR AL SISTEMA</button>
+ <button onclick="iniciarDespertarYApoyo(event)" style="margin-top: 15px;">CONECTAR AL SISTEMA</button> 
  </div> 
-
- <!-- PANEL DE HERRAMIENTAS INTEGRAL COMPATIBLE CON EL MODELO DE MONETIZACIÓN USA -->
- <div id="panelHerramientas" class="card" style="display: none;">
- <h3 style="color: var(--primary);">Plataforma Integral de Servicios - USA</h3>
- <p id="etiquetaPlanActual" style="font-weight: bold; color: var(--success); font-size: 14px; margin: 5px 0;"></p>
- <p id="contadorDescargasRestantes" style="color: var(--dim); font-size: 13px; margin: 0 0 15px 0;"></p>
-
- <div style="margin-bottom: 15px;">
- <label for="selectorTramite" style="font-size:14px;">¿Qué servicio necesitas utilizar hoy?</label>
- <select id="selectorTramite">
- <optgroup label="💼 Trámites de Inmigración e Identidad">
- <option value="pasaporte_us">Pasaporte Americano (Formularios DS-82 / DS-11)</option>
- <option value="pasaporte_cu">Pasaporte de Cuba (Planilla Consular Unificada)</option>
- </optgroup>
- <optgroup label="💸 Remesas, Envíos de Dinero y Finanzas">
- <option value="remesas_envios">Envíos de Dinero (Western Union / Remitly)</option>
- <option value="pagos_servicios">Pago de Facturas, Multas de Tránsito, Seguros y DMV</option>
- </optgroup>
- <optgroup label="🏥 Salud, Clínicas y Soporte Público">
- <option value="clinicas_salud">Clínicas Locales del Condado y Hospitales Nacionales</option>
- </optgroup>
- <optgroup label="✈️ Logística y Transporte Multimodal">
- <option value="transporte_logistica">Transporte Total (Marítimo, Aéreo, Terrestre, Yates)</option>
- </optgroup>
- <optgroup label="🌴 Ocio, Turismo y Entretenimiento">
- <option value="ocio_entretenimiento">Hoteles, Restaurantes, Parques Recreativos y Gobierno</option>
- </optgroup>
- </select>
- </div>
- <div style="margin-bottom: 15px;">
- <label for="inputDocumento" style="font-size:14px;">Confirme su Número de Documento (DPI / A-Number / Seguro):</label>
- <input id="inputDocumento" type="text" placeholder="Ingrese sus datos oficiales de control">
- <p id="mensajeAlertaCaracteres" style="color: var(--danger); font-size: 13px; margin-top: 5px; display: none;"></p>
- </div>
-
- <div style="margin-bottom: 15px;">
- <label style="font-size:14px; display: block;">Subir Documentación o Fotos de Soporte (Si aplica):</label>
- <input type="file" accept="image/*,application/pdf" multiple style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:white; margin-top:5px;">
- </div>
-
- <button id="btnEjecutarServicio" onclick="enviarTramiteSsuperApp()">ABRIR PORTAL DIRECTO EN UN CLIC</button>
-
- <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO -->
- <div id="dev-login-box" class="card">
- <p class="small" style="font-weight:bold; margin-bottom:10px;">ACCESO DESARROLLADOR / ADMINISTRACIÓN</p>
- <input id="devUser" type="text" placeholder="Usuario Desarrollador" style="margin-bottom:8px;">
- <input id="devPass" type="password" placeholder="Contraseña Desarrollador" style="margin-bottom:8px;">
- <p id="mensajeAlertaLogin" style="color: var(--danger); font-size: 12px; margin-bottom:8px; display:none;"></p>
- <button onclick="ejecutarLoginDev(event)" style="background:#4b5563; padding:10px;">INGRESAR EN MODO SANDBOX</button>
- </div>
- </div>
-
- <!-- CORTINA LIMPIA DE ENFOQUE TOTAL ABSOLUTO -->
- <div id="ventanaCortinaLimpia" class="card" style="display: none; border: 2px solid var(--primary); padding: 25px; text-align: center;">
- <h2 style="color: var(--success);">PORTAL SEGURO PREPARADO</h2>
- <p class="small">RESOLUCIÓN DE ENLACES EXTERNOS AUTORIZADOS</p>
- <div id="bloqueTextoVisualLimpio" style="background:#1f2937; padding:20px; border-radius:10px; text-align:left; font-size:15px; margin: 15px 0; line-height: 1.6;"></div>
- <div id="zonaBotonesDescarga" style="display: flex; flex-direction: column; gap: 8px;"></div>
- <button onclick="volverAlMenuDespejado()" style="background:transparent; border:1px solid var(--dim); margin-top:15px; width: auto; padding: 10px 20px;">
- REGRESAR AL MENÚ PRINCIPAL
- </button>
- </div>
+ <!-- PANEL DE HERRAMIENTAS INTEGRAL COMPATIBLE CON EL MODELO DE MONETIZACIÓN USA --> 
+ <div id="panelHerramientas" class="card" style="display: none;"> 
+ <h3 style="color: var(--primary);">Plataforma Integral de Servicios - USA</h3> 
+ <p id="etiquetaPlanActual" style="font-weight: bold; color: var(--success); font-size: 14px; margin: 5px 0;"></p> 
+ <p id="contadorDescargasRestantes" style="color: var(--dim); font-size: 13px; margin: 0 0 15px 0;"></p> 
+ <div style="margin-bottom: 15px;"> 
+ <label for="selectorTramite" style="font-size:14px;">¿Qué servicio necesitas utilizar hoy?</label> 
+ <select id="selectorTramite"> 
+ <optgroup label="💼 Trámites de Inmigración e Identidad"> 
+ <option value="pasaporte_us">Pasaporte Americano (Formularios DS-82 / DS-11)</option> 
+ <option value="pasaporte_cu">Pasaporte de Cuba (Planilla Consular Unificada)</option> 
+ </optgroup> 
+ <optgroup label="💸 Remesas, Envíos de Dinero y Finanzas"> 
+ <option value="remesas_envios">Envíos de Dinero (Western Union / Remitly)</option> 
+ <option value="pagos_servicios">Pago de Facturas, Multas de Tránsito, Seguros y DMV</option> 
+ </optgroup> 
+ <optgroup label="🏥 Salud, Clínicas y Soporte Público"> 
+ <option value="clinicas_salud">Clínicas Locales del Condado y Hospitales Nacionales</option> 
+ </optgroup> 
+ <optgroup label="✈️ Logística y Transporte Multimodal"> 
+ <option value="transporte_logistica">Transporte Total (Marítimo, Aéreo, Terrestre, Yates)</option> 
+ </optgroup> 
+ <optgroup label="🌴 Ocio, Turismo y Entretenimiento"> 
+ <option value="ocio_entretenimiento">Hoteles, Restaurantes, Parques Recreativos y Gobierno</option> 
+ </optgroup> 
+ </select> 
+ </div> 
+ <div style="margin-bottom: 15px;"> 
+ <label for="inputDocumento" style="font-size:14px;">Confirme su Número de Documento (DPI / A-Number / Seguro):</label> 
+ <input id="inputDocumento" type="text" placeholder="Ingrese sus datos oficiales de control"> 
+ <p id="mensajeAlertaCaracteres" style="color: var(--danger); font-size: 13px; margin-top: 5px; display: none;"></p> 
+ </div> 
+ <div style="margin-bottom: 15px;"> 
+ <label style="font-size:14px; display: block;">Subir Documentación o Fotos de Soporte (Si aplica):</label> 
+ <input type="file" accept="image/*,application/pdf" multiple style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:white; margin-top:5px;"> 
+ </div> 
+ <button id="btnEjecutarServicio" onclick="enviarTramiteSsuperApp()">ABRIR PORTAL DIRECTO EN UN CLIC</button> 
+ <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO --> 
+ <div id="dev-login-box" class="card"> 
+ <p class="small" style="font-weight:bold; margin-bottom:10px;">ACCESO DESARROLLADOR / ADMINISTRACIÓN</p> 
+ <input id="devUser" type="text" placeholder="Usuario Desarrollador" style="margin-bottom:8px;"> 
+ <input id="devPass" type="password" placeholder="Contraseña Desarrollador" style="margin-bottom:8px;"> 
+ <p id="mensajeAlertaLogin" style="color: var(--danger); font-size: 12px; margin-bottom:8px; display:none;"></p> 
+ <button onclick="ejecutarLoginDev(event)" style="background:#4b5563; padding:10px;">INGRESAR EN MODO SANDBOX</button> 
  </div> 
  </div> 
-
- <script src="/static/js/engine.js"></script>
- <script>
- // CONTROL DE LOS DOS COBROS POR MODELO DE TIEMPO (MÁXIMO 20 MINUTOS POST-PAGO)
- if (tipoPlanActual === "evento") {
- const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000;
- setTimeout(function() {
- alert("Su tiempo de sesión de 20 minutos para el Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o de negocio.");
- sessionStorage.clear();
- location.reload();
+ <!-- CORTINA LIMPIA DE ENFOQUE TOTAL ABSOLUTO --> 
+ <div id="ventanaCortinaLimpia" class="card" style="display: none; border: 2px solid var(--primary); padding: 25px; text-align: center;"> 
+ <h2 style="color: var(--success);">PORTAL SEGURO PREPARADO</h2> 
+ <p class="small">RESOLUCIÓN DE ENLACES EXTERNOS AUTORIZADOS</p> 
+ <div id="bloqueTextoVisualLimpio" style="background:#1f2937; padding:20px; border-radius:10px; text-align:left; font-size:15px; margin: 15px 0; line-height: 1.6;"></div> 
+ <div id="zonaBotonesDescarga" style="display: flex; flex-direction: column; gap: 8px;"></div> 
+ <button onclick="volverAlMenuDespejado()" style="background:transparent; border:1px solid var(--dim); margin-top:15px; width: auto; padding: 10px 20px;"> REGRESAR AL MENÚ PRINCIPAL </button> 
+ </div> 
+ </div> 
+ </div> 
+ <script src="/static/js/engine.js"></script> 
+ <script> 
+ // CONTROL DE LOS DOS COBROS POR MODELO DE TIEMPO (MÁXIMO 20 MINUTOS POST-PAGO) 
+ if (typeof EngineState !== 'undefined' && EngineState.currentPlan === "evento") { 
+ const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000; 
+ setTimeout(function() { 
+ alert("Su tiempo de sesión de 20 minutos para el Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o de negocio."); 
+ sessionStorage.clear(); 
+ location.reload(); 
+ }, TIEMPO_RESTRINGIDO_EVENTO); 
+ } else if (typeof tipoPlanActual !== 'undefined' && tipoPlanActual === "evento") {
+ const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000; 
+ setTimeout(function() { 
+ alert("Su tiempo de sesión de 20 minutos para el Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o de negocio."); 
+ sessionStorage.clear(); 
+ location.reload(); 
  }, TIEMPO_RESTRINGIDO_EVENTO);
  }
-
- function iniciarDespertarYApoyo(event) {
- if (event) event.preventDefault();
- fetch('/ping').catch(err => console.log("Llamando al servidor..."));
-
- let fraseElegida = "";
- const ultimaFrase = sessionStorage.getItem('ultimaFraseKamizen');
- let opcionesDisponibles = frasesApoyo.filter(f => f !== ultimaFrase);
- if (opcionesDisponibles.length === 0) opcionesDisponibles = frasesApoyo;
- 
- fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)];
- sessionStorage.setItem('ultimaFraseKamizen', fraseElegida);
-
- document.getElementById('cargaInicial').style.display = 'none';
- document.getElementById('textoApoyo').innerText = fraseElegida;
- document.getElementById('pantallaApoyo').style.display = 'block';
-
- setTimeout(function() {
- document.getElementById('pantallaApoyo').style.display = 'none';
- document.getElementById('panelHerramientas').style.display = 'block';
- actualizarInterfazDeLimites();
- }, 40000); // 40 segundos exactos para calentar Render
+ function iniciarDespertarYApoyo(event) { 
+ if (event) event.preventDefault(); 
+ fetch('/ping').catch(err => console.log("Llamando al servidor...")); 
+ let fraseElegida = ""; 
+ const ultimaFrase = sessionStorage.getItem('ultimaFraseKamizen'); 
+ let opcionesDisponibles = frasesApoyo.filter(f => f !== ultimaFrase); 
+ if (opcionesDisponibles.length === 0) opcionesDisponibles = frasesApoyo; 
+ fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)]; 
+ sessionStorage.setItem('ultimaFraseKamizen', fraseElegida); 
+ document.getElementById('cargaInicial').style.display = 'none'; 
+ document.getElementById('textoApoyo').innerText = fraseElegida; 
+ document.getElementById('pantallaApoyo').style.display = 'block'; 
+ setTimeout(function() { 
+ document.getElementById('pantallaApoyo').style.display = 'none'; 
+ document.getElementById('panelHerramientas').style.display = 'block'; 
+ if (typeof actualizarInterfazDeLimites === 'function') {
+ actualizarInterfazDeLimites(); 
  }
-
- function enviarTramiteSsuperApp() {
- const selector = document.getElementById("selectorTramite");
- const inputDoc = document.getElementById("inputDocumento");
- const alerta = document.getElementById("mensajeAlertaCaracteres");
- const btn = document.getElementById("btnEjecutarServicio");
-
- const tramite = selector.value;
- const documento = inputDoc.value.trim();
-
- // VALIDACIÓN COMPLETAMENTE PACIENTE
- if (documento === "") {
- alerta.innerText = "¡Atención! Te hace falta completar el número de documento para que la aplicación pueda caminar.";
- alerta.style.display = "block";
- return;
+ }, 40000); // 40 segundos exactos para calentar Render 
+ } 
+ function enviarTramiteSsuperApp() { 
+ const selector = document.getElementById("selectorTramite"); 
+ const inputDoc = document.getElementById("inputDocumento"); 
+ const alerta = document.getElementById("mensajeAlertaCaracteres"); 
+ const btn = document.getElementById("btnEjecutarServicio"); 
+ const tramite = selector.value; 
+ const documento = inputDoc.value.trim(); 
+ // VALIDACIÓN COMPLETAMENTE PACIENTE 
+ if (documento === "") { 
+ alerta.innerText = "¡Atención! Te hace falta completar el número de documento para que la aplicación pueda caminar."; 
+ alerta.style.display = "block"; 
+ return; 
+ } 
+ alerta.style.display = "none"; 
+ btn.disabled = true; 
+ btn.innerText = "Abriendo pasarela de comunicación asíncrona..."; 
+ fetch('/tramites_locales', { 
+ method: 'POST', 
+ headers: { 'Content-Type': 'application/json' }, 
+ body: JSON.stringify({ tramite: tramite, dpi: documento }) 
+ }) 
+ .then(response => response.json()) 
+ .then(data => { 
+ btn.disabled = false; 
+ btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC"; 
+ if (typeof renderizarRespuestaLimpia === 'function') {
+ renderizarRespuestaLimpia(data); 
  }
- alerta.style.display = "none";
-
- btn.disabled = true;
- btn.innerText = "Abriendo pasarela de comunicación asíncrona...";
-
- fetch('/tramites_locales', {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ tramite: tramite, dpi: documento })
- })
- .then(response => response.json())
- .then(data => {
- btn.disabled = false;
- btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC";
- renderizarRespuestaLimpia(data);
- })
- .catch(err => {
- btn.disabled = false;
- btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC";
- alert("Error de comunicación en los servidores de Render.");
- });
- }
+ }) 
+ .catch(err => { 
+ btn.disabled = false; 
+ btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC"; 
+ alert("Error de comunicación en los servidores de Render."); 
+ }); 
+ } 
  </script> 
 </body> 
 </html>
