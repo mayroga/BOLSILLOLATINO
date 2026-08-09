@@ -1,19 +1,15 @@
 import os
 import re
 import hmac
-from datetime import datetime
 from flask import Flask, request, jsonify, session, render_template
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "MAY_ROGA_LLC_BOLSILLO_LATINO_SECURE_TOKEN_2026")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "MAY_ROGA_LLC_BOLSILLOLATINO_SECURE_TOKEN_2026")
 
-# =========================================================
-# CONFIGURACIÓN DE ENTORNO Y CREDENCIALES DE ACCESO
-# =========================================================
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
-STRIPE_PRICE_ID1 = os.environ.get("STRIPE_PRICE_ID1")  # $15.99 - Uso único
-STRIPE_PRICE_ID2 = os.environ.get("STRIPE_PRICE_ID2")  # $30.99 - Mensual Personal
-STRIPE_PRICE_ID3 = os.environ.get("STRIPE_PRICE_ID3")  # $149.99 - Mensual Negocios
+STRIPE_PRICE_ID1 = os.environ.get("STRIPE_PRICE_ID1")
+STRIPE_PRICE_ID2 = os.environ.get("STRIPE_PRICE_ID2")
+STRIPE_PRICE_ID3 = os.environ.get("STRIPE_PRICE_ID3")
 DEV_USER = os.environ.get("DEV_USER", "admin")
 DEV_PASS = os.environ.get("DEV_PASS", "root")
 
@@ -29,201 +25,570 @@ def ping():
 def index():
     return render_template('app.html')
 
-# =========================================================
-# ACCESO DE ADMINISTRACIÓN SEGURO
-# =========================================================
 @app.route('/login_dev', methods=['POST'])
 def login_dev():
     datos = request.json or {}
     usuario = datos.get("username")
     clave = datos.get("password")
-
     if usuario and clave and hmac.compare_digest(usuario, DEV_USER) and hmac.compare_digest(clave, DEV_PASS):
         session["autenticado"] = True
         session["tipo_pago"] = "negocio"
         return jsonify({"status": "success", "redirect": "/app"}), 200
     return jsonify({"status": "error", "message": "Acceso denegado."}), 401
 
-# =========================================================
-# BASE DE DATOS MAESTRA: PLANTILLAS OFICIALES CON DOBLE VERIFICACIÓN
-# =========================================================
-PLANTILLAS_OFICIALES = {
-    "ajuste_cubano": {
-        "id": "ajuste_cubano",
-        "titulo": "Ley de Ajuste Cubano (Residencia Permanente I-485)",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Expediente estructurado bajo la Ley de Ajuste Cubano. Imprima su formulario oficial I-485 en inglés. Adjunte declaración jurada de entrada física, dos fotos tamaño pasaporte y copia nítida de su parole o documento I-94 de inspección.",
-        "correo": "Dirección Oficial de Envío Postal (USCIS Chicago Lockbox):\n• Por USPS: USCIS, Attn: FBAS, P.O. Box 805887, Chicago, IL 60680.\n• Por Servicio Exprés (FedEx/UPS/DHL): USCIS, Attn: FBAS (Box 805887), 131 S. Dearborn St., 3rd Floor, Chicago, IL 60603-5517.",
-        "url": "https://www.uscis.gov/es/residencias-permanentes/tarjeta-verde-para-cubanos/ley-de-ajuste-cubano"
+# =========================================================================
+# MATRIZ PANAMERICANA UNIVERSAL: LOS 20 PAÍSES DE LATINOAMÉRICA
+# Papelería oficial, formularios migratorios, permisos y trámites cotidianos
+# =========================================================================
+MATRIZ_20_PAISES = {
+    # 1. MÉXICO
+    "mx_integral": {
+        "id": "mx_integral",
+        "categoria": "1. México",
+        "titulo": "México: Papelería Completa (I-130, I-601A, Visas y Matrícula Consular)",
+        "descripcion": "Trámites migratorios USCIS, perdón provisional y documentación consular mexicana.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_identificacion", "label": "Número de Matrícula Consular o Pasaporte Mexicano", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud específica en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "MEXICAN CITIZEN / RESIDENT DOCUMENTATION APPLICATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Consular ID / Passport: {numero_identificacion}\n"
+            "Specific Request / Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is accurate.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "USCIS Lockbox / Consulado de México en EE. UU."
     },
-    "pasaporte_us": {
-        "id": "pasaporte_us",
-        "titulo": "Pasaporte de Estados Unidos (Americano)",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Formulario DS-11 / DS-82 completado. Imprima el documento físico, adjunte fotografía oficial con fondo blanco y anexe el giro postal correspondiente a nombre del Departamento de Estado.",
-        "correo": "Dirección de Envío Postal Oficial: National Passport Processing Center, P.O. Box 90155, Philadelphia, PA 19190-0155.",
-        "url": "https://travel.state.gov/content/travel/en/passports.html"
+
+    # 2. CUBA
+    "cu_integral": {
+        "id": "cu_integral",
+        "categoria": "2. Cuba",
+        "titulo": "Cuba: Papelería Completa (Ley de Ajuste I-485, Parole, Prórrogas y Poderes)",
+        "descripcion": "Residencia permanente, ajuste cubano y gestión de documentos consulares de la isla.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre y Apellidos del Solicitante", "tipo": "text"},
+            {"campo": "a_number", "label": "Número de Alien (A-Number) o Pasaporte Cubano", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa el trámite de ajuste o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "CUBAN ADJUSTMENT ACT / CONSULAR DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Alien Registration Number / Cuban Passport: {a_number}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "USCIS Chicago Lockbox / Consulado de Cuba."
     },
-    "perdones_peticiones": {
-        "id": "perdones_peticiones",
-        "titulo": "Perdones Migratorios, Asilos Políticos y Permisos de Trabajo",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Formularios I-589 / I-765 / I-601 listos para impresión. El sistema genera la plantilla oficial limpia exigida por las autoridades federales.",
-        "correo": "Instrucciones Postales: Verifique obligatoriamente el Lockbox de USCIS correspondiente a su estado actual en la tabla oficial de direcciones de presentación de cada formulario.",
-        "url": "https://www.uscis.gov/es/formularios"
+
+    # 3. VENEZUELA
+    "ve_integral": {
+        "id": "ve_integral",
+        "categoria": "3. Venezuela",
+        "titulo": "Venezuela: Papelería Completa (TPS I-821, Permiso de Trabajo I-765, Asilo)",
+        "descripcion": "Protección temporal, permisos laborales y trámites de supervivencia para venezolanos.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "a_number", "label": "Número de Alien (A-Number)", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud de TPS o Asilo en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "VENEZUELAN TPS / ASYLUM / WORK PERMIT APPLICATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Alien Registration Number (A-Number): {a_number}\n"
+            "Application Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "USCIS Chicago Lockbox."
     },
-    "pasaporte_cu": {
-        "id": "pasaporte_cu",
-        "titulo": "Pasaporte de Cuba (Renovación Consular)",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Planilla Consular Unificada de Cuba lista. Inserte sus datos de identidad, adjunte dos fotografías fondo blanco y el Money Order oficial requerido.",
-        "correo": "Dirección Oficial de Envío Postal: Embassy of the Republic of Cuba, Consular Section, 2630 16th St NW, Washington, DC 20009.",
-        "url": "https://eecuba.cubaminrex.cu/"
+
+    # 4. COLOMBIA
+    "co_integral": {
+        "id": "co_integral",
+        "categoria": "4. Colombia",
+        "titulo": "Colombia: Papelería Completa (Visas B1/B2 DS-160, Peticiones y Actas)",
+        "descripcion": "Visados consulares de turismo, peticiones familiares y trámites notariales colombianos.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_pasaporte", "label": "Número de Pasaporte Colombiano", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su trámite de visa o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "COLOMBIAN CITIZEN CONSULAR & VISA DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Colombian Passport: {numero_pasaporte}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Embajada de EE. UU. en Bogotá / Consulado de Colombia."
     },
-    "pasaporte_mx": {
-        "id": "pasaporte_mx",
-        "titulo": "Pasaporte e Identificación de México (Matrícula Consular)",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Formulario de citas consulares preparado. Tenga listo su acta de nacimiento original, identificación oficial y comprobante de domicilio.",
-        "correo": "Presentarse directamente en la sede del Consulado Mexicano asignado a su demarcación o gestionar vía MiConsulado.",
-        "url": "https://sre.gob.mx"
+
+    # 5. EL SALVADOR
+    "sv_integral": {
+        "id": "sv_integral",
+        "categoria": "5. El Salvador",
+        "titulo": "El Salvador: Papelería Completa (Renovación TPS, DUI y Trámites Consulares)",
+        "descripcion": "Protección temporal, emisión de Documento Único de Identidad y asistencia legal.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_dui", "label": "Número de DUI o Pasaporte Salvadoreño", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su trámite de TPS o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "SALVADORAN TPS & CONSULAR DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "DUI / Passport Number: {numero_dui}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "USCIS Lockbox / Consulado de El Salvador."
     },
-    "pasaporte_ve": {
-        "id": "pasaporte_ve",
-        "titulo": "Pasaporte y Prórroga de Venezuela (SAIME)",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Borrador técnico de solicitud completado. Verifique la correcta activación de su usuario y datos en la plataforma oficial del Saime.",
-        "correo": "Gestión digital en línea y atención presencial en la sección consular autorizada.",
-        "url": "https://www.saime.gob.ve/"
+
+    # 6. GUATEMALA
+    "gt_integral": {
+        "id": "gt_integral",
+        "categoria": "6. Guatemala",
+        "titulo": "Guatemala: Papelería Completa (Visas H-2A/H-2B, Pasaportes y Matrícula Consular)",
+        "descripcion": "Visas de trabajo agrícola, emisión de pasaportes y asistencia legal consular.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_cui", "label": "Número de CUI / DPI o Pasaporte", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su trámite de trabajo o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "GUATEMALAN WORK VISA & CONSULAR DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "CUI / Passport Number: {numero_cui}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Embajada de EE. UU. en Guatemala / Consulado."
     },
-    "pasaporte_co": {
-        "id": "pasaporte_co",
-        "titulo": "Pasaporte de Colombia (Registro Consular)",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Formulario técnico de pre-registro completado. Presente su cédula de ciudadanía original el día de su cita consular.",
-        "correo": "Dirigirse al Consulado General de Colombia correspondiente a su condado de residencia.",
-        "url": "https://cancilleria.gov.co"
+
+    # 7. HONDURAS
+    "hn_integral": {
+        "id": "hn_integral",
+        "categoria": "7. Honduras",
+        "titulo": "Honduras: Papelería Completa (TPS, Tarjeta de Identidad y Poderes)",
+        "descripcion": "Amparo temporal, emisión de documentos de identidad y gestiones consulares.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_identidad", "label": "Número de Identidad o Pasaporte Hondureño", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud de TPS o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "HONDURAN TPS & CONSULAR DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "National ID / Passport: {numero_identidad}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "USCIS Lockbox / Consulado de Honduras."
     },
-    "western_union": {
-        "id": "western_union",
-        "titulo": "Western Union - Envíos de Dinero",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Enlace directo establecido para realizar envíos de remesas familiares a cualquier parte del mundo de forma segura.",
-        "correo": "Servicio en línea inmediato a través de la plataforma oficial autorizada.",
-        "url": "https://www.westernunion.com"
+
+    # 8. REPÚBLICA DOMINICANA
+    "do_integral": {
+        "id": "do_integral",
+        "categoria": "8. República Dominicana",
+        "titulo": "República Dominicana: Papelería Completa (Procesamiento Consular, Visas y Actas)",
+        "descripcion": "Entrevistas de residencia en Santo Domingo, visados y legalización de documentos.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_cedula", "label": "Cédula Dominicana o Pasaporte", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su trámite consular o de residencia en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "DOMINICAN REPUBLIC CONSULAR & RESIDENCY DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Cedula / Passport: {numero_cedula}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Embajada de EE. UU. en Santo Domingo."
     },
-    "remitly": {
-        "id": "remitly",
-        "titulo": "Remitly - Transferencias Internacionales",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Plataforma lista para transferencias directas a cuentas bancarias o ventanillas de cobro en Latinoamérica.",
-        "correo": "Verifique las tasas de cambio y tarifas vigentes antes de confirmar su operación.",
-        "url": "https://www.remitly.com"
+
+    # 9. ECUADOR
+    "ec_integral": {
+        "id": "ec_integral",
+        "categoria": "9. Ecuador",
+        "titulo": "Ecuador: Papelería Completa (Pasaportes Biométricos, Poderes y Visados)",
+        "descripcion": "Emisión de documentos consulares, actas notariales y visados temporales.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_cedula", "label": "Cédula de Identidad Ecuatoriana o Pasaporte", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su trámite consular o notarial en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "ECUADORIAN CONSULAR & NOTARIAL DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Cedula / Passport: {numero_cedula}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Consulado de Ecuador en EE. UU."
     },
-    "dmv_licencias": {
-        "id": "dmv_licencias",
-        "titulo": "DMV - Licencias de Conducir, Títulos y Registro de Carros",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Acceso directo al portal oficial de vehículos y licencias de conducir para todos los estados de la unión americana.",
-        "correo": "Seleccione su estado correspondiente (Florida, Texas, California, etc.) en la pasarela oficial.",
-        "url": "https://www.usa.gov/es/agencias-estatales-de-vehiculos-motorizados-dmv"
+
+    # 10. PERÚ
+    "pe_integral": {
+        "id": "pe_integral",
+        "categoria": "10. Perú",
+        "titulo": "Perú: Papelería Completa (Pasaportes, Actas RENIEC y Visas)",
+        "descripcion": "Gestión documental para peruanos en el exterior, registros civiles y visados.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_dni", "label": "Número de DNI o Pasaporte Peruano", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud consular o de visa en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "PERUVIAN CONSULAR & RENIEC DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "DNI / Passport: {numero_dni}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Consulado General del Perú en EE. UU."
     },
-    "pagos_facturas": {
-        "id": "pagos_facturas",
-        "titulo": "Pago de Facturas, Luz, Agua, Tickets de Tránsito y Seguros",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Directorio centralizado para la gestión de servicios básicos del hogar, pólizas de seguros y multas de tráfico.",
-        "correo": "Tenga a la mano su número de cuenta, número de póliza o el código del ticket de la corte.",
-        "url": "https://www.usa.gov"
+
+    # 11. ARGENTINA
+    "ar_integral": {
+        "id": "ar_integral",
+        "categoria": "11. Argentina",
+        "titulo": "Argentina: Papelería Completa (Visas B1/B2, DNI y Certificados Consulares)",
+        "descripcion": "Visados de no inmigrante y documentación consular para ciudadanos argentinos.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_pasaporte", "label": "Número de Pasaporte Argentino", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud de visa o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "ARGENTINE CONSULAR & VISA DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Passport Number: {numero_pasaporte}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Embajada de EE. UU. en Buenos Aires / Consulado."
     },
-    "clinicas_seguros": {
-        "id": "clinicas_seguros",
-        "titulo": "Clínicas Médicas del Condado y Seguros de Salud",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Catálogo nacional de hospitales públicos, clínicas comunitarias de bajo costo y opciones del Mercado de Salud.",
-        "correo": "Filtre los centros de atención ingresando su código postal en el buscador oficial autorizado.",
-        "url": "https://findahealthcenter.hrsa.gov/"
+
+    # 12. NICARAGUA
+    "ni_integral": {
+        "id": "ni_integral",
+        "categoria": "12. Nicaragua",
+        "titulo": "Nicaragua: Papelería Completa (Asilo I-589, Parole Humanitario y TPS)",
+        "descripcion": "Regularización migratoria, amparo por asilo y permisos humanitarios.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "a_number", "label": "Número de Alien (A-Number) o Cédula", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud de asilo o parole en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "NICARAGUAN ASYLUM & PAROLE DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Alien Registration Number / ID: {a_number}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "USCIS Lockbox."
     },
-    "transporte_viajes": {
-        "id": "transporte_viajes",
-        "titulo": "Movilidad Total, Logística, Aérea, Marítima y Pasajes",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Pasarela de logística y transporte conectada con proveedores nacionales terrestres, aéreos, marítimos y aerolíneas.",
-        "correo": "Verifique tarifas y mantenga sus documentos de identidad oficiales vigentes al viajar.",
-        "url": "https://www.uber.com"
+
+    # 13. CHILE
+    "cl_integral": {
+        "id": "cl_integral",
+        "categoria": "13. Chile",
+        "titulo": "Chile: Papelería Completa (Autorización ESTA, Pasaportes y Visas)",
+        "descripcion": "Programa de exención de visa ESTA y documentación consular chilena.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_pasaporte", "label": "Número de Pasaporte Chileno", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud ESTA o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "CHILEAN ESTA & CONSULAR DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Passport Number: {numero_pasaporte}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "CBP ESTA Portal / Consulado de Chile."
     },
-    "cafeterias_restaurantes": {
-        "id": "cafeterias_restaurantes",
-        "titulo": "Cafeterías Locales, Restaurantes Latinos y Comida Tradicional",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Directorio de establecimientos gastronómicos hispanos y puntos de encuentro de la comunidad latina.",
-        "correo": "Filtre su búsqueda por ubicación o condado para ubicar locales cercanos.",
-        "url": "https://www.tripadvisor.com"
+
+    # 14. BOLIVIA
+    "bo_integral": {
+        "id": "bo_integral",
+        "categoria": "14. Bolivia",
+        "titulo": "Bolivia: Papelería Completa (Pasaportes, Poderes y Visados)",
+        "descripcion": "Emisión de pasaportes bolivianos, legalizaciones y trámites consulares.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_ci", "label": "Cédula de Identidad o Pasaporte Boliviano", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "BOLIVIAN CONSULAR & PASSPORT DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "CI / Passport: {numero_ci}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Consulado de Bolivia en EE. UU."
     },
-    "ocio_parques": {
-        "id": "ocio_parques",
-        "titulo": "Playas, Parques Nacionales Recreativos y Centros de Recreación",
-        "ultima_verificacion": "2026-08-09",
-        "guia": "Acceso directo a mapas, normativas y reservas de espacios recreativos y parques nacionales autorizados.",
-        "correo": "Sugerencia: Revise regulaciones y horarios locales del condado antes de su visita.",
-        "url": "https://www.nps.gov"
+
+    # 15. HAITÍ
+    "ht_integral": {
+        "id": "ht_integral",
+        "categoria": "15. Haití",
+        "titulo": "Haití: Papelería Completa (TPS, Parole Humanitario y Permisos)",
+        "descripcion": "Amparo migratorio, protección temporal y permisos laborales para ciudadanos haitianos.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "a_number", "label": "Número de Alien (A-Number) o Pasaporte", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud de TPS o Parole en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "HAITIAN TPS & HUMANITARIAN PAROLE DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Alien Registration Number / Passport: {a_number}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "USCIS Lockbox."
+    },
+
+    # 16. URUGUAY
+    "uy_integral": {
+        "id": "uy_integral",
+        "categoria": "16. Uruguay",
+        "titulo": "Uruguay: Papelería Completa (Visas B1/B2 y Certificados Consulares)",
+        "descripcion": "Visados de no inmigrante y documentación oficial para ciudadanos uruguayos.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_pasaporte", "label": "Número de Pasaporte Uruguayo", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud consular o de visa en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "URUGUAYAN CONSULAR & VISA DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Passport Number: {numero_pasaporte}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Embajada de EE. UU. en Uruguay / Consulado."
+    },
+
+    # 17. PANAMÁ
+    "pa_integral": {
+        "id": "pa_integral",
+        "categoria": "17. Panamá",
+        "titulo": "Panamá: Papelería Completa (Visas y Servicios Notariales Consulares)",
+        "descripcion": "Visados estadounidenses y asistencia jurídica notarial panameña.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_pasaporte", "label": "Número de Pasaporte Panameño", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud de visa o consular en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "PANAMANIAN CONSULAR & VISA DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Passport Number: {numero_pasaporte}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Embajada de EE. UU. en Panamá."
+    },
+
+    # 18. COSTA RICA
+    "cr_integral": {
+        "id": "cr_integral",
+        "categoria": "18. Costa Rica",
+        "titulo": "Costa Rica: Papelería Completa (Visas Consulares y Legalizaciones)",
+        "descripcion": "Procesamiento de visados y certificación de documentos oficiales.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_pasaporte", "label": "Número de Pasaporte Costarricense", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud consular o de visa en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "COSTA RICAN CONSULAR & VISA DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Passport Number: {numero_pasaporte}\n"
+            "Petition Details: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Embajada de EE. UU. en San José."
+    },
+
+    # 19. PARAGUAY
+    "py_integral": {
+        "id": "py_integral",
+        "categoria": "19. Paraguay",
+        "titulo": "Paraguay: Papelería Completa (Visas y Documentación Consular)",
+        "descripcion": "Emisión de pasaportes paraguayos y visados de ingreso a EE. UU.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "numero_pasaporte", "label": "Número de Pasaporte Paraguayo", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa su solicitud consular o de visa en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "PARAGUAYAN CONSULAR & VISA DOCUMENTATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "Passport Number: {numero_pasaporte}\n"
+            "Case Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Ministerio de Relaciones Exteriores / Embajada EE. UU."
+    },
+
+    # 20. TRÁMITES COTIDIANOS Y TRANSVERSALES (EE. UU. GENERAL)
+    "transversal_cotidiano": {
+        "id": "transversal_cotidiano",
+        "categoria": "20. Trámites Cotidianos y Supervivencia (EE. UU.)",
+        "titulo": "Guías Cotidianas: DMV, Licencias, Servicios (FPL), LLC y Arriendos",
+        "descripcion": "Plantillas y formularios para servicios públicos, licencias de conducir, contratos y corporaciones.",
+        "campos_requeridos": [
+            {"campo": "nombre_completo", "label": "Nombre Completo del Solicitante", "tipo": "text"},
+            {"campo": "direccion_eeuu", "label": "Dirección Completa en EE. UU. (Calle, Ciudad, Estado, Zip)", "tipo": "text"},
+            {"campo": "detalle_tramite", "label": "Describa el trámite cotidiano o comercial en español", "tipo": "textarea"}
+        ],
+        "formato_limpio": (
+            "U.S. LOCAL SERVICES / BUSINESS / DMV APPLICATION\n\n"
+            "Applicant Full Name: {nombre_completo}\n"
+            "U.S. Address: {direccion_eeuu}\n"
+            "Service Statement: {detalle_traducido}\n\n"
+            "I certify under penalty of perjury that the information provided is true and correct.\n\n"
+            "Date: {fecha_actual}\n\n"
+            "Applicant Signature: _____________________________________\n"
+            "Printed Name: {nombre_completo}"
+        ),
+        "destino_oficial": "Agencia Local / DMV / IRS / Compañía de Servicios Públicos."
     }
 }
 
-# =========================================================
-# ENDPOINTS DE CONTROL Y LISTADO DE CATEGORÍAS (SELECTOR ESTRICTO)
-# =========================================================
 @app.route('/api/categorias', methods=['GET'])
 def obtener_categorias():
-    """Devuelve la lista limpia de trámites oficiales para construir menús desplegables o selectores en el frontend."""
-    lista = [{"id": info["id"], "titulo": info["titulo"]} for info in PLANTILLAS_OFICIALES.values()]
+    lista = [{
+        "id": info["id"], 
+        "categoria": info["categoria"], 
+        "titulo": info["titulo"],
+        "descripcion": info["descripcion"],
+        "campos": info["campos_requeridos"]
+    } for info in MATRIZ_20_PAISES.values()]
     return jsonify({"status": "success", "categorias": lista}), 200
 
-@app.route('/api/asistente', methods=['POST'])
-def asistente():
-    """Procesa estrictamente por ID de plantilla seleccionada desde el menú, eliminando la ambigüedad del texto libre."""
+@app.route('/api/categorias', methods=['GET'])
+def obtener_categorias():
+    # ... (código de categorías)
+    return jsonify({"status": "success", "categorias": lista}), 200
+
+# =========================================================================
+# AQUÍ VA PEGADO EL CÓDIGO DE GENERACIÓN DE DOCUMENTO
+# =========================================================================
+@app.route('/api/generar-documento', methods=['POST'])
+def generar_documento():
     datos = request.json or {}
     tramite_id = datos.get("tramite_id", "").strip()
+    respuestas = datos.get("respuestas", {})
     
-    # Búsqueda exacta y directa en el diccionario maestro de plantillas blindadas
-    match_encontrado = PLANTILLAS_OFICIALES.get(tramite_id)
+    item = MATRIZ_20_PAISES.get(tramite_id)
+    if not item:
+        return jsonify({"status": "error", "message": "Elemento no encontrado."}), 404
 
-    if match_encontrado:
-        respuesta_texto = f"**{match_encontrado['titulo']}**\n\n{match_encontrado['guia']}\n\n{match_encontrado['correo']}"
-        botones = [{
-            "texto": f"Imprimir / Guardar: {match_encontrado['titulo']}",
-            "url": match_encontrado['url']
-        }]
-    else:
-        respuesta_texto = "**Selección Requerida**\n\nPor favor, seleccione una categoría oficial válida del menú desplegable para acceder a la guía verificada."
-        botones = [{
-            "texto": "Portal Oficial Autorizado de USA",
-            "url": "https://www.usa.gov"
-        }]
+    import datetime
+    fecha_hoy = datetime.datetime.now().strftime("%B %d, %Y")
 
-    voz_texto = limpiar_texto_para_voz(respuesta_texto)
+    formato_args = {"fecha_actual": fecha_hoy}
+    
+    for campo_info in item["campos_requeridos"]:
+        nombre_campo = campo_info["campo"]
+        valor_usuario = respuestas.get(nombre_campo, f"[{nombre_campo.upper()}]")
+        
+        if campo_info["tipo"] == "textarea":
+            formato_args["detalle_traducido"] = f"Certified legal statement provided by applicant: {valor_usuario}"
+        else:
+            formato_args[nombre_campo] = valor_usuario
+
+    try:
+        documento_limpio = item["formato_limpio"].format(**formato_args)
+    except Exception:
+        documento_limpio = item["formato_limpio"]
 
     return jsonify({
         "status": "success",
-        "respuesta": respuesta_texto,
-        "voz_texto": voz_texto,
-        "botones": botones
+        "documento_resultado": documento_limpio,
+        "destino_oficial": item["destino_oficial"],
+        "voz_texto": limpiar_texto_para_voz("Documento convertido con éxito. Listo para revisión y firma del solicitante.")
     }), 200
+# =========================================================================
+# FIN DEL BLOQUE. AQUÍ CONTINÚAN LAS RUTAS DE PAGO DE STRIPE
+# =========================================================================
 
-# =========================================================
-# PASARELA DE PAGOS STRIPE & CONTROL DE ACCESO
-# =========================================================
+@app.route('/api/crear-sesion-pago', methods=['POST'])
+def crear_sesion_pago():
+    # ... (código de pago)
+
 @app.route('/api/crear-sesion-pago', methods=['POST'])
 def crear_sesion_pago():
     datos = request.json or {}
     plan = datos.get("plan", "1")
-    
-    precios = {
-        "1": STRIPE_PRICE_ID1,
-        "2": STRIPE_PRICE_ID2,
-        "3": STRIPE_PRICE_ID3
-    }
-    
+    precios = {"1": STRIPE_PRICE_ID1, "2": STRIPE_PRICE_ID2, "3": STRIPE_PRICE_ID3}
     price_id = precios.get(plan, STRIPE_PRICE_ID1)
     
     if not STRIPE_SECRET_KEY or not price_id:
@@ -236,10 +601,7 @@ def crear_sesion_pago():
         stripe.api_key = STRIPE_SECRET_KEY
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
-            line_items=[{
-                'price': price_id,
-                'quantity': 1,
-            }],
+            line_items=[{'price': price_id, 'quantity': 1}],
             mode='payment',
             success_url='https://' + request.host + '/app?pagado=true',
             cancel_url='https://' + request.host + '/app?cancelado=true',
