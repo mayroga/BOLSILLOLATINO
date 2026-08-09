@@ -564,12 +564,15 @@ def verificar_acceso():
 @app.route('/api/asistente', methods=['POST'])
 def asistente_virtual():
     datos = request.json or {}
-    pregunta = datos.get("pregunta", "").strip()
+    mensaje = datos.get("mensaje", "").strip()
+    dpi = datos.get("dpi", "").strip()
+    idioma = datos.get("idioma", "es")
     
-    respuesta_texto = (
-        "Asesoría registrada correctamente. "
-        "Por favor, verifique los datos ingresados en el formulario y proceda a generar su documento oficial."
-    )
+    # Construcción de la respuesta base
+    respuesta_texto = f"Asesoría registrada para la solicitud: '{mensaje}'."
+    if dpi:
+        respuesta_texto += f" Documento/Identificador asociado: {dpi}."
+    respuesta_texto += " Verifique los detalles y proceda con confianza."
     
     return jsonify({
         "status": "success",
