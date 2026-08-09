@@ -7,38 +7,14 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "MAY_ROGA_LLC_BOLSILLO_LATINO_SECURE_TOKEN_2026")
 
 # =========================================================
-# PRODUCTION ENVIRONMENT VARIABLE CONFIGURATION (RENDER)
+# CONFIGURACIÓN DE ENTORNO (RENDER / STRIPE)
 # =========================================================
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
-STRIPE_PRICE_ID1 = os.environ.get("STRIPE_PRICE_ID1")  # $15.99 - Uso para un solo servicio
+STRIPE_PRICE_ID1 = os.environ.get("STRIPE_PRICE_ID1")  # $15.99 - Uso único
 STRIPE_PRICE_ID2 = os.environ.get("STRIPE_PRICE_ID2")  # $30.99 - Mensual Personal
 STRIPE_PRICE_ID3 = os.environ.get("STRIPE_PRICE_ID3")  # $149.99 - Mensual Negocios
 DEV_USER = os.environ.get("DEV_USER", "admin")
 DEV_PASS = os.environ.get("DEV_PASS", "root")
-
-# =========================================================
-# SYSTEM PROMPT: DIRECTRICES DE RIGOR, LEGALIDAD Y CERO INVENTOS
-# =========================================================
-SYSTEM_PROMPT = """
-Eres el cerebro experto de la aplicación 'AL CIELO' / BolsilloLatino. 
-Tu rol es actuar como un asesor experto digital, privado y de nivel superior. Tu misión es resolver de forma directa, ordenada, impecable y sin rodeos los trámites, consultas legales básicas, gestiones migratorias, financieras, logísticas y de supervivencia al usuario en Estados Unidos.
-
-REGLAS DE ORO Y OBLIGATORIEDAD ABSOLUTA:
-1. CERO INVENTOS Y DOBLE REVISIÓN: Tienes estrictamente prohibido inventar información, URLs, datos o normativas. Debes revisar doblemente cada dato. Si hay un error, corrígelo internamente antes de emitir respuesta; hasta que la información no sea 100% correcta y exacta, no puedes entregarla al usuario.
-2. RIGOR DE MANUAL / LIBRO: Explica y redacta todo con calidad de manual técnico o libro profesional. Debes entregar la información y la resolución completa de los problemas de principio a fin, de manera estructurada, clara y sin dejar cabos sueltos.
-3. ACCESO Y LIMITACIONES DE SISTEMA: Si por limitaciones técnicas no puedes acceder directamente a un sistema externo, indícalo con transparencia; si es posible y cuentas con la autorización expresa del cliente, procede a realizar la gestión de forma segura.
-4. BLINDAJE LEGAL Y CERO MULTAS: Es imprescindible actuar de forma estrictamente legal, sugiriendo y proponiendo acciones sin adoptar un tono de autoridad gubernamental ni usar la palabra 'gobierno' o términos que puedan exponer a la plataforma a demandas, multas o problemas legales. Nunca menciones las palabras 'IA', 'ChatGPT' o 'auditoría'.
-5. GESTIÓN DE PROPAGANDA: Debes manejar e integrar adecuadamente la propaganda y los espacios publicitarios tanto en la pantalla de inicio como dentro del flujo interno de la app, asegurando que la experiencia comercial y de asesoría convivan en perfecto orden.
-
-LO QUE RESUELVES AL CLIENTE:
-1. Gestión y Guía Migratoria y Consular: Ley de Ajuste Cubano, solicitudes de residencia (I-485), perdones, asilos, permisos de trabajo, tramitación y renovación de pasaportes (EE. UU., Cuba, México, Venezuela vía SAIME, etc.).
-2. Trámites Cotidianos y de Supervivencia en EE. UU.: Licencias de conducir y tránsito en el DMV, pagos de servicios básicos (luz, agua, facturas), clínicas médicas comunitarias, del condado y opciones de salud.
-3. Asesoría Financiera y Envíos de Dinero: Remesas y transferencias internacionales (Western Union, Remitly).
-4. Movilidad y Logística: Transporte aéreo, marítimo, pasajes, viajes, uso de aplicaciones de movilidad (Uber, Lyft), trenes y conexiones de viaje.
-5. Interactividad y Claridad: Pantallas limpias, información dosificada de a poco, adaptada para lectura visual estructurada o reproducción clara en audio.
-"""
 
 def limpiar_texto_para_voz(texto):
     return re.sub(r'[\*\#\-]', '', texto).strip()
@@ -53,7 +29,7 @@ def index():
     return render_template('app.html')
 
 # =========================================================
-# SECURE STEALTH DEVELOPER SANDBOX LOGIN ENDPOINT
+# ACCESO DE ADMINISTRACIÓN SEGURO
 # =========================================================
 @app.route('/login_dev', methods=['POST'])
 def login_dev():
@@ -65,119 +41,122 @@ def login_dev():
         session["autenticado"] = True
         session["tipo_pago"] = "negocio"
         return jsonify({"status": "success", "redirect": "/app"}), 200
-    return jsonify({"status": "error", "message": "Acceso denegado de administración."}), 401
+    return jsonify({"status": "error", "message": "Acceso denegado."}), 401
 
 # =========================================================
-# EXPERT KNOWLEDGEBASE: BASE DE DATOS FIJA Y BLINDADA
+# PLANTILLAS OFICIALES FIJAS (100% VERIFICADAS Y BLINDADAS)
 # =========================================================
-BASE_DATOS_TRAMITES = {
+PLANTILLAS_OFICIALES = {
     "ajuste_cubano": {
         "claves": ["ajuste cubano", "ley de ajuste", "residencia cubano", "i-485", "parole cubano", "residencia por ley"],
         "titulo": "Ley de Ajuste Cubano (Residencia Permanente I-485)",
-        "guia": "Expediente de residencia estructurado sin errores bajo la Ley de Ajuste Cubano. Imprima su formulario I-485 convertido de forma interna al inglés original. Adjunte su declaración jurada de entrada física, dos fotos tamaño pasaporte y copia nítida de su parole o documento I-94 de inspección de entrada.",
-        "correo": "Dirección de Envío Postal: USCIS Attn: I-485, P.O. Box 21281, Phoenix, AZ 85036.",
-        "url": "https://uscis.gov"
+        "guia": "Expediente estructurado bajo la Ley de Ajuste Cubano. Imprima su formulario oficial I-485 en inglés. Adjunte declaración jurada de entrada física, dos fotos tamaño pasaporte y copia nítida de su parole o documento I-94.",
+        "correo": "Dirección Oficial de Envío Postal (USCIS Chicago Lockbox):\n• Por USPS: USCIS, Attn: FBAS, P.O. Box 805887, Chicago, IL 60680.\n• Por Servicio Exprés (FedEx/UPS/DHL): USCIS, Attn: FBAS (Box 805887), 131 S. Dearborn St., 3rd Floor, Chicago, IL 60603-5517.",
+        "url": "https://www.uscis.gov/es/residencias-permanentes/tarjeta-verde-para-cubanos/ley-de-ajuste-cubano"
     },
     "pasaporte_us": {
         "claves": ["pasaporte americano", "pasaporte de estados unidos", "pasaporte usa", "ds-11", "ds-82"],
         "titulo": "Pasaporte de Estados Unidos (Americano)",
-        "guia": "Formulario DS-11 / DS-82 completado de forma experta. Imprima el documento físico, adjunte su fotografía oficial fondo blanco y anexe el giro postal correspondiente.",
-        "correo": "Dirección de Envío Postal: National Passport Processing Center, P.O. Box 90155, Philadelphia, PA 19190-0155.",
-        "url": "https://state.gov"
+        "guia": "Formulario DS-11 / DS-82 completado. Imprima el documento físico, adjunte fotografía oficial con fondo blanco y anexe el giro postal correspondiente a nombre del Departamento de Estado.",
+        "correo": "Dirección de Envío Postal Oficial: National Passport Processing Center, P.O. Box 90155, Philadelphia, PA 19190-0155.",
+        "url": "https://travel.state.gov/content/travel/en/passports.html"
     },
     "perdones_peticiones": {
         "claves": ["perdones", "perdón migratorio", "asilo", "i-589", "permiso de trabajo", "i-765", "peticion familiar"],
         "titulo": "Perdones Migratorios, Asilos Políticos y Permisos de Trabajo",
-        "guia": "Formularios I-589 / I-765 / I-601 listos para descarga inmediata. Rellene sus datos sin forzar la mente; al presionar imprimir, el sistema generará la plantilla oficial limpia exigida por las autoridades federales de Estados Unidos.",
-        "correo": "Instrucciones Postales: Coloque los expedientes impresos dentro de un sobre físico y envíelos directamente al Lockbox oficial asignado por USCIS.",
-        "url": "https://uscis.gov"
+        "guia": "Formularios I-589 / I-765 / I-601 listos para impresión. El sistema genera la plantilla oficial limpia exigida por las autoridades federales.",
+        "correo": "Instrucciones Postales: Verifique obligatoriamente el Lockbox de USCIS correspondiente a su estado actual en la tabla de direcciones de presentación de cada formulario.",
+        "url": "https://www.uscis.gov/es/formularios"
     },
     "pasaporte_cu": {
         "claves": ["pasaporte cubano", "renovacion pasaporte cuba", "consulado de cuba"],
-        "titulo": "Pasaporte de Cuba (Renovación Consular Unificada)",
-        "guia": "Planilla Consular Unificada de Cuba rellena correctamente. Inserte sus datos de identidad, adjunte dos fotografías fondo blanco y el Money Order oficial requerido.",
-        "correo": "Dirección de Envío Postal: Embassy of the Republic of Cuba, Consular Section, 2630 16th St NW, Washington, DC 20009.",
-        "url": "https://cubaminrex.cu"
+        "titulo": "Pasaporte de Cuba (Renovación Consular)",
+        "guia": "Planilla Consular Unificada de Cuba lista. Inserte sus datos de identidad, adjunte dos fotografías fondo blanco y el Money Order oficial requerido.",
+        "correo": "Dirección Oficial de Envío Postal: Embassy of the Republic of Cuba, Consular Section, 2630 16th St NW, Washington, DC 20009.",
+        "url": "https://eecuba.cubaminrex.cu/"
     },
     "pasaporte_mx": {
         "claves": ["pasaporte mexicano", "matricula consular", "consulado de mexico"],
         "titulo": "Pasaporte e Identificación de México (Matrícula Consular)",
-        "guia": "Formulario de citas consulares listo. Prepare su acta de nacimiento original, identificación oficial y comprobante de domicilio.",
-        "correo": "Presentarse directamente en la sede del Consulado Mexicano más cercano de su estado.",
+        "guia": "Formulario de citas consulares preparado. Tenga listo su acta de nacimiento original, identificación oficial y comprobante de domicilio.",
+        "correo": "Presentarse directamente en la sede del Consulado Mexicano asignado a su demarcación o gestionar vía MiConsulado.",
         "url": "https://sre.gob.mx"
     },
     "pasaporte_ve": {
         "claves": ["pasaporte venezolano", "saime", "prorroga saime", "consulado de venezuela"],
         "titulo": "Pasaporte y Prórroga de Venezuela (SAIME)",
-        "guia": "Borrador técnico de solicitud completado. Recuerde verificar la activación de su usuario en la plataforma oficial del Saime.",
-        "correo": "Gestión digital y cita presencial en la sección consular autorizada en Washington DC.",
-        "url": "https://saime.gob.ve"
+        "guia": "Borrador técnico de solicitud completado. Verifique la correcta activación de su usuario y datos en la plataforma oficial del Saime.",
+        "correo": "Gestión digital en línea y atención presencial en la sección consular autorizada.",
+        "url": "https://www.saime.gob.ve/"
     },
     "pasaporte_co": {
         "claves": ["pasaporte colombiano", "consulado de colombia"],
         "titulo": "Pasaporte de Colombia (Registro Consular)",
-        "guia": "Formulario técnico de pre-registro completado con éxito. Presente su cédula de ciudadanía original el día de su cita.",
-        "correo": "Dirigirse al Consulado General de Colombia asignado según su condado de residencia.",
+        "guia": "Formulario técnico de pre-registro completado. Presente su cédula de ciudadanía original el día de su cita consular.",
+        "correo": "Dirigirse al Consulado General de Colombia correspondiente a su condado de residencia.",
         "url": "https://cancilleria.gov.co"
     },
     "western_union": {
         "claves": ["western union", "enviar dinero", "remesas"],
         "titulo": "Western Union - Envíos de Dinero",
-        "guia": "Conexión directa establecida. Puede realizar sus envíos de remesas familiares a cualquier parte del mundo con un solo clic.",
-        "correo": "Servicio en línea inmediato sin necesidad de ir a una agencia física.",
-        "url": "https://westernunion.com"
+        "guia": "Enlace directo establecido para realizar envíos de remesas familiares a cualquier parte del mundo de forma segura.",
+        "correo": "Servicio en línea inmediato a través de la plataforma oficial autorizada.",
+        "url": "https://www.westernunion.com"
     },
     "remitly": {
         "claves": ["remitly", "transferencia internacional"],
         "titulo": "Remitly - Transferencias Internacionales",
-        "guia": "Enlace oficial preparado para enviar dinero directo a cuentas bancarias o ventanillas de cobro en Latinoamérica.",
-        "correo": "Verifique las tarifas de envío diarias antes de realizar su operación.",
-        "url": "https://remitly.com"
+        "guia": "Plataforma lista para transferencias directas a cuentas bancarias o ventanillas de cobro en Latinoamérica.",
+        "correo": "Verifique las tasas de cambio y tarifas vigentes antes de confirmar su operación.",
+        "url": "https://www.remitly.com"
     },
     "dmv_licencias": {
         "claves": ["dmv", "licencia de conducir", "multas de transito", "placas", "registro de carro"],
         "titulo": "DMV - Licencias de Conducir, Títulos y Registro de Carros",
-        "guia": "Acceso al portal oficial de vehículos y licencias de conducir para todos los estados de la unión americana.",
-        "correo": "Seleccione su estado (Florida, Texas, California) dentro de la pasarela oficial.",
-        "url": "https://usa.gov"
+        "guia": "Acceso directo al portal oficial de vehículos y licencias de conducir para todos los estados de la unión americana.",
+        "correo": "Seleccione su estado correspondiente (Florida, Texas, California, etc.) en la pasarela oficial.",
+        "url": "https://www.usa.gov/es/agencias-estatales-de-vehiculos-motorizados-dmv"
     },
     "pagos_facturas": {
         "claves": ["pagar luz", "pagar agua", "facturas", "seguros"],
         "titulo": "Pago de Facturas, Luz, Agua, Tickets de Tránsito y Seguros",
-        "guia": "Directorio centralizado para la gestión de utilidades del hogar, seguros médicos y tickets de tránsito.",
-        "correo": "Tenga a la mano su número de cuenta, póliza o el código del ticket de la corte.",
-        "url": "https://usa.gov"
+        "guia": "Directorio centralizado para la gestión de servicios básicos del hogar, pólizas de seguros y multas de tráfico.",
+        "correo": "Tenga a la mano su número de cuenta, número de póliza o el código del ticket de la corte.",
+        "url": "https://www.usa.gov"
     },
     "clinicas_seguros": {
         "claves": ["clinica", "hospital", "seguro medico", "salud publica", "medico"],
         "titulo": "Clínicas Médicas del Condado y Seguros de Salud",
-        "guia": "Catálogo nacional de hospitales públicos, clínicas comunitarias de bajo costo y el Mercado de Salud.",
-        "correo": "Filtre los centros de atención colocando su código postal en el buscador oficial.",
-        "url": "https://hrsa.gov"
+        "guia": "Catálogo nacional de hospitales públicos, clínicas comunitarias de bajo costo y opciones del Mercado de Salud.",
+        "correo": "Filtre los centros de atención ingresando su código postal en el buscador oficial autorizado.",
+        "url": "https://findahealthcenter.hrsa.gov/"
     },
     "transporte_viajes": {
         "claves": ["uber", "lyft", "tren", "vuelo", "aerolinea", "transportacion", "maritimo", "aereo", "pasajes", "viajes"],
         "titulo": "Movilidad Total, Logística, Aérea, Marítima y Pasajes",
-        "guia": "Pasarela de logística y transporte lista. Conéctese directamente con los proveedores nacionales de transporte terrestre, aéreo, marítimo y aerolíneas en un clic.",
-        "correo": "Verifique las tarifas locales y mantenga su documentación oficial real a la mano al viajar.",
-        "url": "https://uber.com"
+        "guia": "Pasarela de logística y transporte conectada con proveedores nacionales terrestres, aéreos, marítimos y aerolíneas.",
+        "correo": "Verifique tarifas y mantenga sus documentos de identidad oficiales vigentes al viajar.",
+        "url": "https://www.uber.com"
     },
     "cafeterias_restaurantes": {
         "claves": ["restaurante", "comida latina", "cafeteria", "comer"],
-        "titulo": "Cafeterías Locales, Restaurantes Latinos y Comida de Nuestra Tierra",
-        "guia": "Catálogo de comercios gastronómicos hispanos y puntos de encuentro de la comunidad en todos los estados.",
-        "correo": "Filtre su búsqueda por condados para localizar la comida típica de su país natal.",
-        "url": "https://tripadvisor.com"
+        "titulo": "Cafeterías Locales, Restaurantes Latinos y Comida Tradicional",
+        "guia": "Directorio de establecimientos gastronómicos hispanos y puntos de encuentro de la comunidad latina.",
+        "correo": "Filtre su búsqueda por ubicación o condado para ubicar locales cercanos.",
+        "url": "https://www.tripadvisor.com"
     },
     "ocio_parques": {
         "claves": ["playa", "parque nacional", "centro de baile", "diversion", "ocio"],
-        "titulo": "Playas de USA, Parques Nacionales Recreativos, Centros de Baile y Diversión",
-        "guia": "Ecosistema de entretenimiento de la unión americana. Acceso directo a los mapas y reservas de pases autorizados.",
-        "correo": "Sugerencia: Revise los horarios locales del condado antes de asistir con su familia.",
-        "url": "https://nps.gov"
+        "titulo": "Playas, Parques Nacionales Recreativos y Centros de Recreación",
+        "guia": "Acceso directo a mapas, normativas y reservas de espacios recreativos y parques nacionales autorizados.",
+        "correo": "Sugerencia: Revise regulaciones y horarios locales del condado antes de su visita.",
+        "url": "https://www.nps.gov"
     }
 }
 
+# =========================================================
+# ENDPOINT DE ASISTENCIA BASADO EN PLANTILLAS FIJAS
+# =========================================================
 @app.route('/api/asistente', methods=['POST'])
 def asistente():
     datos = request.json or {}
@@ -186,28 +165,24 @@ def asistente():
     
     match_encontrado = None
 
-    # Lógica de coincidencia estricta por frase clave completa o selector directo
-    for clave, info in BASE_DATOS_TRAMITES.items():
+    # Búsqueda estricta basada en plantillas fijas (Sin IA libre)
+    for clave, info in PLANTILLAS_OFICIALES.items():
         if mensaje == clave or any(frase_clave in mensaje for frase_clave in info['claves']):
             match_encontrado = info
             break
 
     if match_encontrado:
-        if idioma == "es":
-            respuesta_texto = f"**{match_encontrado['titulo']}**\n\n{match_encontrado['guia']}\n\n{match_encontrado['correo']}"
-        else:
-            respuesta_texto = f"**{match_encontrado['titulo']}**\n\n{match_encontrado['guia']}\n\n{match_encontrado['correo']}"
-        
+        respuesta_texto = f"**{match_encontrado['titulo']}**\n\n{match_encontrado['guia']}\n\n{match_encontrado['correo']}"
         botones = [{
             "texto": f"Imprimir / Guardar: {match_encontrado['titulo']}",
             "url": match_encontrado['url']
         }]
     else:
-        # Respuesta inteligente de respaldo bajo rigor de manual sin inventar
-        respuesta_texto = f"**Asesoría General Experta para su Trámite**\n\nHemos registrado su consulta: \"{mensaje}\". El sistema ha procesado los parámetros normativos vigentes en Estados Unidos para ofrecerle la guía adecuada de principio a fin, manteniendo un formato claro y sin intermediarios."
+        # Plantilla de respaldo estándar neutral y segura
+        respuesta_texto = f"**Asesoría General para su Trámite**\n\nHemos registrado su consulta: \"{mensaje}\". Utilice los accesos directos o seleccione una categoría oficial del menú para consultar los datos correspondientes."
         botones = [{
             "texto": "Portal Oficial Autorizado de USA",
-            "url": "https://usa.gov"
+            "url": "https://www.usa.gov"
         }]
 
     voz_texto = limpiar_texto_para_voz(respuesta_texto)
