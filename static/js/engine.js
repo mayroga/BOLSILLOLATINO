@@ -86,7 +86,7 @@ function renderizarRespuestaLimpia(data) {
     if (cargaInicial) cargaInicial.style.display = "none";
     if (bloqueExplicativoBoton) bloqueExplicativoBoton.style.display = "none";
 
-    // Las orientaciones y respuestas en la pantalla se muestran limpias en español para el usuario
+    // Visualización en pantalla orientada en español claro para el usuario
     if (bloqueTextoVisual && data.respuesta) {
         bloqueTextoVisual.innerHTML = data.respuesta.replace(/\n/g, "<br>");
     }
@@ -97,7 +97,7 @@ function renderizarRespuestaLimpia(data) {
             data.botones.forEach(b => {
                 const btnEnlace = document.createElement("button");
                 btnEnlace.className = "print-btn";
-                // El botón avisa claramente que al imprimir o guardar se generará con la plantilla oficial en inglés
+                // El botón especifica claramente que al guardar o imprimir se genera en inglés oficial de agencia
                 btnEnlace.innerText = b.texto + " (Guardar / Imprimir en Inglés Oficial)";
 
                 btnEnlace.onclick = function() {
@@ -115,8 +115,8 @@ function renderizarRespuestaLimpia(data) {
                     EngineState.incrementDownloads();
                     actualizarInterfazDeLimites();
 
-                    // TRUCO DE CONVERSIÓN OFICIAL: Añadimos parámetro o abrimos la ruta asegurando
-                    // que el backend devuelva el documento convertido al formato original en inglés exigido por las agencias.
+                    // TRUCO DE CONVERSIÓN OBLIGATORIA: Envía el parámetro para que el backend
+                    // entregue el documento listo en inglés con el formato original del gobierno.
                     let urlFinalEnIngles = b.url;
                     if (urlFinalEnIngles.includes('?')) {
                         urlFinalEnIngles += "&format=official_english";
