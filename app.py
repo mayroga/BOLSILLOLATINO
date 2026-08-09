@@ -160,6 +160,7 @@ BASE_DATOS_TRAMITES = {
         "url": "https://booking.com"
     }
 }
+
 @app.route('/api/asistente', methods=['POST'])
 def asistente():
     datos = request.json or {}
