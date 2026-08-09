@@ -19,17 +19,20 @@
  <h2 id="textoApoyo" style="color: var(--text); font-size: 22px; line-height: 1.6; font-weight: 500; margin-bottom: 20px;"> Preparando tu conexión segura... </h2> 
  <p style="color: var(--dim); font-size: 14px;">Espere un momento, por favor.</p> 
  </div> 
+
  <!-- CAJA DE ENTRADA INICIAL CON EL BOTON QUE ACTIVA TODO EN SECRETO --> 
  <div id="cargaInicial" class="card center"> 
  <h3>INITIALIZING SYSTEM...</h3> 
  <p>Sincronizando motores informativos de control. Por favor espere.</p> 
  <button onclick="iniciarDespertarYApoyo(event)" style="margin-top: 15px;">CONECTAR AL SISTEMA</button> 
  </div> 
+
  <!-- PANEL DE HERRAMIENTAS INTEGRAL COMPATIBLE CON EL MODELO DE MONETIZACIÓN USA --> 
  <div id="panelHerramientas" class="card" style="display: none;"> 
  <h3 style="color: var(--primary);">Plataforma Integral de Servicios - USA</h3> 
  <p id="etiquetaPlanActual" style="font-weight: bold; color: var(--success); font-size: 14px; margin: 5px 0;"></p> 
  <p id="contadorDescargasRestantes" style="color: var(--dim); font-size: 13px; margin: 0 0 15px 0;"></p> 
+
  <div style="margin-bottom: 15px;"> 
  <label for="selectorTramite" style="font-size:14px;">¿Qué servicio necesitas utilizar hoy?</label> 
  <select id="selectorTramite"> 
@@ -52,16 +55,20 @@
  </optgroup> 
  </select> 
  </div> 
+
  <div style="margin-bottom: 15px;"> 
  <label for="inputDocumento" style="font-size:14px;">Confirme su Número de Documento (DPI / A-Number / Seguro):</label> 
  <input id="inputDocumento" type="text" placeholder="Ingrese sus datos oficiales de control"> 
  <p id="mensajeAlertaCaracteres" style="color: var(--danger); font-size: 13px; margin-top: 5px; display: none;"></p> 
  </div> 
+
  <div style="margin-bottom: 15px;"> 
  <label style="font-size:14px; display: block;">Subir Documentación o Fotos de Soporte (Si aplica):</label> 
  <input type="file" accept="image/*,application/pdf" multiple style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:white; margin-top:5px;"> 
  </div> 
+
  <button id="btnEjecutarServicio" onclick="enviarTramiteSsuperApp()">ABRIR PORTAL DIRECTO EN UN CLIC</button> 
+
  <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO --> 
  <div id="dev-login-box" class="card"> 
  <p class="small" style="font-weight:bold; margin-bottom:10px;">ACCESO DESARROLLADOR / ADMINISTRACIÓN</p> 
@@ -71,6 +78,7 @@
  <button onclick="ejecutarLoginDev(event)" style="background:#4b5563; padding:10px;">INGRESAR EN MODO SANDBOX</button> 
  </div> 
  </div> 
+
  <!-- CORTINA LIMPIA DE ENFOQUE TOTAL ABSOLUTO --> 
  <div id="ventanaCortinaLimpia" class="card" style="display: none; border: 2px solid var(--primary); padding: 25px; text-align: center;"> 
  <h2 style="color: var(--success);">PORTAL SEGURO PREPARADO</h2> 
@@ -102,7 +110,7 @@
  "No te dejes agobiar por el tiempo, el servidor está haciendo el trabajo pesado por ti hoy."
  ];
 
- // Respaldo local de la variable del plan por si no ha cargado engine.js a tiempo
+ // Respaldo local de la variable del plan por si no ha cargado engine.js a tiempo 
  const tipoPlanActual = sessionStorage.getItem("tipoPagoReal") || "evento"; 
 
  // CONTROL DE LOS DOS COBROS POR MODELO DE TIEMPO (MÁXIMO 20 MINUTOS POST-PAGO) 
@@ -117,7 +125,6 @@
 
  function iniciarDespertarYApoyo(event) { 
  if (event) event.preventDefault(); 
- fetch('/ping').catch(err => console.log("Llamando al servidor...")); 
  
  let fraseElegida = ""; 
  const ultimaFrase = sessionStorage.getItem('ultimaFraseKamizen'); 
@@ -131,13 +138,26 @@
  document.getElementById('textoApoyo').innerText = fraseElegida; 
  document.getElementById('pantallaApoyo').style.display = 'block'; 
  
- setTimeout(function() { 
+ // Conexión real al endpoint /ping para desbloquear la pantalla tan pronto despierte el servidor
+ fetch('/ping')
+ .then(response => {
  document.getElementById('pantallaApoyo').style.display = 'none'; 
  document.getElementById('panelHerramientas').style.display = 'block'; 
  if (typeof actualizarInterfazDeLimites === 'function') {
  actualizarInterfazDeLimites(); 
  }
- }, 40000); // 40 segundos exactos para calentar Render 
+ })
+ .catch(err => {
+ console.log("Reintentando conexión con el servidor...");
+ // Respaldo de seguridad por si tarda la red (abre el panel tras 8 segundos de fallo)
+ setTimeout(() => {
+ document.getElementById('pantallaApoyo').style.display = 'none'; 
+ document.getElementById('panelHerramientas').style.display = 'block'; 
+ if (typeof actualizarInterfazDeLimites === 'function') {
+ actualizarInterfazDeLimites(); 
+ }
+ }, 8000);
+ });
  } 
 
  function enviarTramiteSsuperApp() { 
