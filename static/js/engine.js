@@ -1,146 +1,84 @@
-/* =========================================================
-   BOLSILLOLATINO - ASYNCHRONOUS ENGINE & PRODUCTION STATE LOGIC
-   ========================================================= */
+// =========================================================
+// MOTOR FRONTEND: BOLSILLO LATINO / MAY ROGA LLC 
+// =========================================================
 
-const EngineState = {
-    currentPlan: sessionStorage.getItem("tipoPagoReal") || "evento",
-    getDownloadsToday: () => parseInt(sessionStorage.getItem("descargasConsumidasHoy")) || 0,
-    incrementDownloads: () => {
-        const count = EngineState.getDownloadsToday() + 1;
-        sessionStorage.setItem("descargasConsumidasHoy", count.toString());
-    }
-};
+document.addEventListener("DOMContentLoaded", function () {
+    verificarEstadoAcceso();
+});
 
-function actualizarInterfazDeLimites() {
-    const etiquetaPlan = document.getElementById("etiquetaPlanActual");
-    const etiquetaDescargas = document.getElementById("contadorDescargasRestantes");
-    const consumidas = EngineState.getDownloadsToday();
-
-    if (!etiquetaPlan || !etiquetaDescargas) return;
-
-    if (EngineState.currentPlan === "negocio") {
-        etiquetaPlan.innerText = "Plan Negocios Comercial Activo ($149.99 USD) • Acceso Ilimitado Profesional";
-        etiquetaDescargas.innerText = "Descargas e Impresiones en PDF: ¡COMPLETAMENTE ILIMITADAS PARA TU AGENCIA!";
-    } else if (EngineState.currentPlan === "suscripcion") {
-        etiquetaPlan.innerText = "Plan Personal Activo ($30.99 USD) • Acceso Mensual Completo";
-        etiquetaDescargas.innerText = `Descargas de PDF hoy: ${5 - consumidas} restantes (Límite: 5 al día).`;
-    } else {
-        etiquetaPlan.innerText = "Plan Uso para un Solo Servicio ($15.99 USD) • Acceso Seguro por 20 Minutos";
-        etiquetaDescargas.innerText = `Descargas en esta sesión: ${2 - consumidas} restantes (Límite: 2 por pago).`;
-    }
-}
-
-function ejecutarLoginDev(event) {
-    if (event) event.preventDefault();
-
-    const userField = document.getElementById("devUser");
-    const passField = document.getElementById("devPass");
-    const alertBox = document.getElementById("mensajeAlertaLogin");
-
-    if (!userField || !passField) return;
-
-    const username = userField.value.trim();
-    const password = passField.value.trim();
-
-    if (username === "" || password === "") {
-        if (alertBox) {
-            alertBox.innerText = "Por favor, complete todos los campos de acceso.";
-            alertBox.style.display = "block";
-        }
-        return;
-    }
-
-    fetch('/login_dev', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username, password: password })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Credenciales Incorrectas");
-        return response.json();
-    })
-    .then(data => {
-        sessionStorage.setItem("tipoPagoReal", "negocio");
-        sessionStorage.setItem("autenticadoDev", "true");
-        window.location.href = data.redirect || "/app";
-    })
-    .catch(err => {
-        if (alertBox) {
-            alertBox.innerText = "Error: Acceso denegado. Verifique las variables DEV_USER y DEV_PASS en Render.";
-            alertBox.style.display = "block";
-        }
-    });
+function verificarEstadoAcceso() {
+    fetch('/api/verificar-acceso')
+        .then(response => response.json())
+        .then(data => {
+            if (data.acceso) {
+                const tipoMap = { "1": "Plan Un Servicio", "2": "Suscripción Personal Mensual", "3": "Plan Comercial / Negocios", "negocio": "Modo Administrador Sandbox" };
+                const etiqueta = document.getElementById("etiquetaPlanActual");
+                if (etiqueta) {
+                    etiqueta.innerText = `Estado Activo: ${tipoMap[data.tipo] || "Acceso Autorizado"}`;
+                }
+                sessionStorage.setItem("tipoPagoReal", data.tipo);
+            }
+        })
+        .catch(err => console.error("Error al verificar acceso:", err));
 }
 
 function renderizarRespuestaLimpia(data) {
-    const cabeceraGlobal = document.getElementById("cabeceraGlobal");
+    const cortina = document.getElementById("ventanaCortinaLimpia");
     const panelHerramientas = document.getElementById("panelHerramientas");
-    const cargaInicial = document.getElementById("cargaInicial");
-    const bloqueExplicativoBoton = document.getElementById("bloqueExplicativoBoton");
-    const bloqueTextoVisual = document.getElementById("bloqueTextoVisualLimpio");
+    const bloqueTexto = document.getElementById("bloqueTextoVisualLimpio");
     const zonaBotones = document.getElementById("zonaBotonesDescarga");
-    const ventanaCortina = document.getElementById("ventanaCortinaLimpia");
 
-    if (cabeceraGlobal) cabeceraGlobal.style.display = "none";
+    if (!cortina || !bloqueTexto || !zonaBotones) return;
+
+    // Ocultar panel principal y mostrar cortina de enfoque total
     if (panelHerramientas) panelHerramientas.style.display = "none";
-    if (cargaInicial) cargaInicial.style.display = "none";
-    if (bloqueExplicativoBoton) bloqueExplicativoBoton.style.display = "none";
+    cortina.style.display = "block";
 
-    if (bloqueTextoVisual && data.respuesta) {
-        bloqueTextoVisual.innerHTML = data.respuesta.replace(/\n/g, "<br>");
+    // Formatear texto principal de respuesta de forma limpia y legible
+    let textoFormateado = (data.respuesta || "Proceso completado con éxito.")
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--primary);">$1</strong>')
+        .replace(/\n/g, '<br>');
+
+    bloqueTexto.innerHTML = textoFormateado;
+
+    // Limpiar botones anteriores
+    zonaBotones.innerHTML = "";
+
+    // Renderizar botones de acción / descarga seguros
+    if (data.botones && Array.isArray(data.botones)) {
+        data.botones.forEach(btnInfo => {
+            const enlaceBtn = document.createElement("a");
+            enlaceBtn.href = btnInfo.url;
+            enlaceBtn.target = "_blank";
+            enlaceBtn.rel = "noopener noreferrer";
+            enlaceBtn.innerHTML = `🖨️ ${btnInfo.texto}`;
+            enlaceBtn.style.cssText = "display: block; background: var(--primary); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; text-align: center; margin-top: 8px;";
+            zonaBotones.appendChild(enlaceBtn);
+        });
     }
 
-    if (zonaBotones) {
-        zonaBotones.innerHTML = "";
-        if (data.botones && data.botones.length > 0) {
-            data.botones.forEach(b => {
-                const btnEnlace = document.createElement("button");
-                btnEnlace.className = "print-btn";
-                btnEnlace.innerText = b.text || b.texto;
-
-                btnEnlace.onclick = function() {
-                    const descargasHoy = EngineState.getDownloadsToday();
-
-                    if (EngineState.currentPlan === "evento" && descargasHoy >= 2) {
-                        alert("Has alcanzado el límite máximo de 2 descargas permitido en tu Plan de Uso para un Solo Servicio. Mejora tu plan para continuar.");
-                        return;
-                    }
-                    if (EngineState.currentPlan === "suscripcion" && descargasHoy >= 5) {
-                        alert("Has alcanzado tu límite máximo de 5 descargas por día en el Plan Personal. Para descargas ilimitadas adquiere el Plan Negocios.");
-                        return;
-                    }
-
-                    EngineState.incrementDownloads();
-                    actualizarInterfazDeLimites();
-                    window.open(b.url, '_blank');
-                };
-                zonaBotones.appendChild(btnEnlace);
-            });
+    // Reproducción de voz nativa opcional si el navegador lo soporta y existe texto de voz
+    if (data.voz_texto && 'speechSynthesis' in window) {
+        try {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(data.voz_texto);
+            utterance.lang = 'es-US';
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.log("Audio no soportado o bloqueado por políticas del navegador.");
         }
-    }
-
-    if (ventanaCortina) ventanaCortina.style.display = "block";
-
-    if (data.voz_texto && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-        const mensajeAudio = new SpeechSynthesisUtterance(data.voz_texto);
-        mensajeAudio.lang = "es-GT";
-        window.speechSynthesis.speak(mensajeAudio);
     }
 }
 
 function volverAlMenuDespejado() {
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-
-    const ventanaCortina = document.getElementById("ventanaCortinaLimpia");
-    const cabeceraGlobal = document.getElementById("cabeceraGlobal");
+    const cortina = document.getElementById("ventanaCortinaLimpia");
     const panelHerramientas = document.getElementById("panelHerramientas");
-    const bloqueExplicativoBoton = document.getElementById("bloqueExplicativoBoton");
 
-    if (ventanaCortina) ventanaCortina.style.display = "none";
-    if (cabeceraGlobal) cabeceraGlobal.style.display = "block";
+    if (cortina) cortina.style.display = "none";
     if (panelHerramientas) panelHerramientas.style.display = "block";
-    if (bloqueExplicativoBoton) bloqueExplicativoBoton.style.display = "block";
-}
 
-console.log("BolsilloLatino core static JS engine initialized safely with Voice Record capabilities.");
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+}
