@@ -38,10 +38,8 @@ def login_dev():
 
 # =========================================================================
 # MATRIZ PANAMERICANA UNIVERSAL: LOS 20 PAÍSES DE LATINOAMÉRICA
-# Papelería oficial, formularios migratorios, permisos y trámites cotidianos
 # =========================================================================
 MATRIZ_20_PAISES = {
-    # 1. MÉXICO
     "mx_integral": {
         "id": "mx_integral",
         "categoria": "1. México",
@@ -64,8 +62,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "USCIS Lockbox / Consulado de México en EE. UU."
     },
-
-    # 2. CUBA
     "cu_integral": {
         "id": "cu_integral",
         "categoria": "2. Cuba",
@@ -77,7 +73,7 @@ MATRIZ_20_PAISES = {
             {"campo": "detalle_tramite", "label": "Describa el trámite de ajuste o consular en español", "tipo": "textarea"}
         ],
         "formato_limpio": (
-            "CUBAN ADJUSTMENT ACT / CONSULAR DOCUMENTATION\n\n"
+            "CUBAN ADJUSTMENT CAA / CONSULAR DOCUMENTATION\n\n"
             "Applicant Full Name: {nombre_completo}\n"
             "Alien Registration Number / Cuban Passport: {a_number}\n"
             "Case Statement: {detalle_traducido}\n\n"
@@ -88,8 +84,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "USCIS Chicago Lockbox / Consulado de Cuba."
     },
-
-    # 3. VENEZUELA
     "ve_integral": {
         "id": "ve_integral",
         "categoria": "3. Venezuela",
@@ -112,8 +106,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "USCIS Chicago Lockbox."
     },
-
-    # 4. COLOMBIA
     "co_integral": {
         "id": "co_integral",
         "categoria": "4. Colombia",
@@ -136,8 +128,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Embajada de EE. UU. en Bogotá / Consulado de Colombia."
     },
-
-    # 5. EL SALVADOR
     "sv_integral": {
         "id": "sv_integral",
         "categoria": "5. El Salvador",
@@ -160,8 +150,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "USCIS Lockbox / Consulado de El Salvador."
     },
-
-    # 6. GUATEMALA
     "gt_integral": {
         "id": "gt_integral",
         "categoria": "6. Guatemala",
@@ -184,8 +172,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Embajada de EE. UU. en Guatemala / Consulado."
     },
-
-    # 7. HONDURAS
     "hn_integral": {
         "id": "hn_integral",
         "categoria": "7. Honduras",
@@ -208,8 +194,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "USCIS Lockbox / Consulado de Honduras."
     },
-
-    # 8. REPÚBLICA DOMINICANA
     "do_integral": {
         "id": "do_integral",
         "categoria": "8. República Dominicana",
@@ -232,8 +216,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Embajada de EE. UU. en Santo Domingo."
     },
-
-    # 9. ECUADOR
     "ec_integral": {
         "id": "ec_integral",
         "categoria": "9. Ecuador",
@@ -256,8 +238,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Consulado de Ecuador en EE. UU."
     },
-
-    # 10. PERÚ
     "pe_integral": {
         "id": "pe_integral",
         "categoria": "10. Perú",
@@ -280,8 +260,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Consulado General del Perú en EE. UU."
     },
-
-    # 11. ARGENTINA
     "ar_integral": {
         "id": "ar_integral",
         "categoria": "11. Argentina",
@@ -304,8 +282,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Embajada de EE. UU. en Buenos Aires / Consulado."
     },
-
-    # 12. NICARAGUA
     "ni_integral": {
         "id": "ni_integral",
         "categoria": "12. Nicaragua",
@@ -328,8 +304,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "USCIS Lockbox."
     },
-
-    # 13. CHILE
     "cl_integral": {
         "id": "cl_integral",
         "categoria": "13. Chile",
@@ -352,8 +326,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "CBP ESTA Portal / Consulado de Chile."
     },
-
-    # 14. BOLIVIA
     "bo_integral": {
         "id": "bo_integral",
         "categoria": "14. Bolivia",
@@ -376,8 +348,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Consulado de Bolivia en EE. UU."
     },
-
-    # 15. HAITÍ
     "ht_integral": {
         "id": "ht_integral",
         "categoria": "15. Haití",
@@ -400,8 +370,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "USCIS Lockbox."
     },
-
-    # 16. URUGUAY
     "uy_integral": {
         "id": "uy_integral",
         "categoria": "16. Uruguay",
@@ -424,8 +392,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Embajada de EE. UU. en Uruguay / Consulado."
     },
-
-    # 17. PANAMÁ
     "pa_integral": {
         "id": "pa_integral",
         "categoria": "17. Panamá",
@@ -448,8 +414,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Embajada de EE. UU. en Panamá."
     },
-
-    # 18. COSTA RICA
     "cr_integral": {
         "id": "cr_integral",
         "categoria": "18. Costa Rica",
@@ -472,8 +436,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Embajada de EE. UU. en San José."
     },
-
-    # 19. PARAGUAY
     "py_integral": {
         "id": "py_integral",
         "categoria": "19. Paraguay",
@@ -496,8 +458,6 @@ MATRIZ_20_PAISES = {
         ),
         "destino_oficial": "Ministerio de Relaciones Exteriores / Embajada EE. UU."
     },
-
-    # 20. TRÁMITES COTIDIANOS Y TRANSVERSALES (EE. UU. GENERAL)
     "transversal_cotidiano": {
         "id": "transversal_cotidiano",
         "categoria": "20. Trámites Cotidianos y Supervivencia (EE. UU.)",
