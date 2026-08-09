@@ -533,14 +533,6 @@ def obtener_categorias():
     } for info in MATRIZ_20_PAISES.values()]
     return jsonify({"status": "success", "categorias": lista}), 200
 
-@app.route('/api/categorias', methods=['GET'])
-def obtener_categorias():
-    # ... (código de categorías)
-    return jsonify({"status": "success", "categorias": lista}), 200
-
-# =========================================================================
-# AQUÍ VA PEGADO EL CÓDIGO DE GENERACIÓN DE DOCUMENTO
-# =========================================================================
 @app.route('/api/generar-documento', methods=['POST'])
 def generar_documento():
     datos = request.json or {}
