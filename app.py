@@ -565,7 +565,7 @@ def generar_documento():
         else:
             formato_args[nombre_campo] = valor_usuario
 
-try:
+    try:
         documento_limpio = item["formato_limpio"].format(**formato_args)
     except Exception:
         documento_limpio = item["formato_limpio"]
@@ -577,9 +577,6 @@ try:
         "voz_texto": limpiar_texto_para_voz("Documento convertido con éxito. Listo para revisión y firma del solicitante.")
     }), 200
 
-# =========================================================================
-# AQUÍ COMIENZA LA RUTA DE PAGO LIMPIA Y CORRECTAMENTE ALINEADA
-# =========================================================================
 @app.route('/api/crear-sesion-pago', methods=['POST'])
 def crear_sesion_pago():
     datos = request.json or {}
