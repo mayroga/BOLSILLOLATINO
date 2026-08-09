@@ -564,20 +564,50 @@ def verificar_acceso():
 @app.route('/api/asistente', methods=['POST'])
 def asistente_virtual():
     datos = request.json or {}
-    mensaje = datos.get("mensaje", "").strip()
+    mensaje = datos.get("mensaje", "").strip().upper()
     dpi = datos.get("dpi", "").strip()
-    idioma = datos.get("idioma", "es")
     
-    # Construcción de la respuesta base
-    respuesta_texto = f"Asesoría registrada para la solicitud: '{mensaje}'."
+    # Generador de respuesta experta y estructurada (Adiós a las respuestas vacías)
+    if "AJUSTE" in mensaje or "CUBANO" in mensaje:
+        cuerpo_respuesta = (
+            "<strong>Guía para Ley de Ajuste Cubano (Residencia I-485):</strong><br><br>"
+            "<table style='width:100%; border-collapse: collapse; background:#0f172a; color:#fff;'>"
+            "<tr style='border-bottom:1px solid #334155;'><th style='padding:8px; text-align:left;'>Paso Clave</th><th style='padding:8px; text-align:left;'>Acción Recomendada</th></tr>"
+            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>1. Inspección de Entrada</td><td style='padding:8px;'>Verifique su Formulario I-94 (Parole o entrada legal registrada).</td></tr>"
+            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>2. Permanencia</td><td style='padding:8px;'>Haber estado físicamente en EE. UU. por al menos 1 año y 1 día.</td></tr>"
+            "<tr><td style='padding:8px;'>3. Formulario Oficial</td><td style='padding:8px;'>Preparar la solicitud I-485 con evidencia de ciudadanía y examen médico (I-693).</td></tr>"
+            "</table><br>"
+            "<em>Sugerencia profesional:</em> Le convendría reunir sus documentos de identidad y entradas migratorias de forma ordenada antes de formalizar la petición para asegurar estabilidad en el proceso."
+        )
+    elif "PASAPORTE" in mensaje:
+        cuerpo_respuesta = (
+            "<strong>Orientación para Trámite de Pasaporte:</strong><br><br>"
+            "<table style='width:100%; border-collapse: collapse; background:#0f172a; color:#fff;'>"
+            "<tr style='border-bottom:1px solid #334155;'><th style='padding:8px; text-align:left;'>Verificación</th><th style='padding:8px; text-align:left;'>Detalle Operativo</th></tr>"
+            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>Vigencia Actual</td><td style='padding:8px;'>Compruebe que el documento actual esté próximo a vencer o requiere renovación consular.</td></tr>"
+            "<tr><td style='padding:8px;'>Soporte Documental</td><td style='padding:8px;'>Tenga a mano identificación secundaria y fotografías recientes bajo normas oficiales.</td></tr>"
+            "</table><br>"
+            "<em>Sugerencia profesional:</em> Es recomendable iniciar la gestión con anticipación para evitar contratiempos de movilidad internacional."
+        )
+    else:
+        cuerpo_respuesta = (
+            f"<strong>Asesoría orientativa para:</strong> {mensaje}<br><br>"
+            "<table style='width:100%; border-collapse: collapse; background:#0f172a; color:#fff;'>"
+            "<tr style='border-bottom:1px solid #334155;'><th style='padding:8px; text-align:left;'>Aspecto a Revisar</th><th style='padding:8px; text-align:left;'>Detalle de Acción</th></tr>"
+            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>Evaluación inicial</td><td style='padding:8px;'>Verificar cumplimiento de requisitos normativos y vigencia de identificaciones.</td></tr>"
+            "<tr><td style='padding:8px;'>Estrategia sugerida</td><td style='padding:8px;'>Proceder con la recopilación de soportes y formatos oficiales aplicables.</td></tr>"
+            "</table><br>"
+            f"{(f'Identificador asociado ({dpi}) registrado correctamente.<br>' if dpi else '')}"
+            "<em>Sugerencia profesional:</em> Le invitamos a seguir los pasos indicados con tranquilidad para una resolución favorable."
+        )
+
     if dpi:
-        respuesta_texto += f" Documento/Identificador asociado: {dpi}."
-    respuesta_texto += " Verifique los detalles y proceda con confianza."
+        cuerpo_respuesta += f"<br><br><small>Referencia de expediente / ID: <b>{dpi}</b></small>"
     
     return jsonify({
         "status": "success",
-        "respuesta": respuesta_texto,
-        "voz_texto": limpiar_texto_para_voz(respuesta_texto)
+        "respuesta": cuerpo_respuesta,
+        "voz_texto": limpiar_texto_para_voz("Hemos preparado su guía experta con tablas y pasos claros. Revise los detalles en pantalla para proceder con confianza.")
     }), 200
 
 if __name__ == '__main__':
