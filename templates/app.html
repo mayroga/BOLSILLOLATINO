@@ -3,15 +3,28 @@
 <head> 
  <meta charset="UTF-8" /> 
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
- <title>BolsilloLatino - Sistema Central de Soluciones</title> 
+ <title>BolsilloLatino - Buscador Central de Soluciones</title> 
  <link rel="stylesheet" href="/static/styles.css"> 
 </head> 
 <body> 
  <div id="main-container"> 
- <div id="cabeceraGlobal" class="card center"> 
- <h2 style="color:var(--primary);">BolsilloLatino</h2> 
- <p class="small">Asesoría e Integración Total de Servicios Públicos y Corporativos • USA Suite</p> 
+ 
+ <!-- SI LE DAS 3 CLICS A ESTE TÍTULO SE ABRE EL ACCESO OCULTO DEL PROGRAMADOR -->
+ <div id="cabeceraGlobal" class="card center" onclick="contarClicsDesarrollador()" style="cursor: pointer; user-select: none;"> 
+ <h2 style="color:var(--primary); margin:0;">BolsilloLatino</h2> 
+ <p class="small" style="margin:5px 0 0 0;">¿Qué necesidad resolvemos hoy? • Ecosistema Panhispánico USA</p> 
  </div> 
+
+ <!-- BOTÓN EXPLICATIVO INICIAL (Mantiene entretenido al usuario mientras Render despierta) -->
+ <div id="bloqueExplicativoBoton" class="card center">
+ <button onclick="mostrarExplicacionSistema()" style="background: #4b5563;">¿Para qué sirve esta aplicación verdadera? (Presione Aquí)</button>
+ <div id="textoExplicativoLimpio" style="display:none; text-align:left; font-size:14px; margin-top:15px; background:#1f2937; padding:15px; border-radius:10px; line-height:1.6;">
+ <strong>¡Bienvenido a BolsilloLatino!</strong><br>
+ Esta aplicación es tu asesor personal privado en Estados Unidos. Te ayuda a llenar y descargar formularios oficiales de pasaporte (Americano, Cubano, Mexicano, Venezolano, Colombiano y Centroamericano) listos para imprimir y enviar por sobre postal.<br><br>
+ También te da acceso inmediato en un solo clic a los portales de pago de Western Union, Remitly, multas del DMV, utilidades del condado, seguros de salud, transporte de yates y centros de entretenimiento de todo el país, guiándote paso a paso en español sencillo y sin enredos.
+ </div>
+ </div>
+
  <div id="app"> 
  <!-- VENTANA LIMPIA QUE ESCONDE TODO EN PANTALLA MIENTRAS CORRE EL RELOJ DE PRECARGA --> 
  <div id="pantallaApoyo" style="display: none; padding: 40px 10px; text-align: center;"> 
@@ -23,78 +36,85 @@
  <!-- CAJA DE ENTRADA INICIAL CON EL BOTON QUE ACTIVA TODO EN SECRETO --> 
  <div id="cargaInicial" class="card center"> 
  <h3>INITIALIZING SYSTEM...</h3> 
- <p>Sincronizando motores informativos de control. Por favor espere.</p> 
+ <p>Sincronizando motores de control e inteligencia artificial. Por favor espere.</p> 
  <button onclick="iniciarDespertarYApoyo(event)" style="margin-top: 15px;">CONECTAR AL SISTEMA</button> 
  </div> 
 
- <!-- PANEL DE HERRAMIENTAS INTEGRAL COMPATIBLE CON EL MODELO DE MONETIZACIÓN USA --> 
+ <!-- PANEL DE HERRAMIENTAS PRINCIPAL --> 
  <div id="panelHerramientas" class="card" style="display: none;"> 
- <h3 style="color: var(--primary);">Plataforma Integral de Servicios - USA</h3> 
- <p id="etiquetaPlanActual" style="font-weight: bold; color: var(--success); font-size: 14px; margin: 5px 0;"></p> 
+ <p id="etiquetaPlanActual" style="font-weight: bold; color: var(--success); font-size: 14px; margin: 0 0 5px 0;"></p> 
  <p id="contadorDescargasRestantes" style="color: var(--dim); font-size: 13px; margin: 0 0 15px 0;"></p> 
 
- <div style="margin-bottom: 15px;"> 
- <label for="selectorTramite" style="font-size:14px;">¿Qué servicio necesitas utilizar hoy?</label> 
- <select id="selectorTramite"> 
- <optgroup label="💼 Trámites de Inmigración e Identidad"> 
- <option value="pasaporte_us">Pasaporte Americano (Formularios DS-82 / DS-11)</option> 
- <option value="pasaporte_cu">Pasaporte de Cuba (Planilla Consular Unificada)</option> 
+ <!-- 🎙️ EL BUSCADOR GENERAL LIBRE DE INTELIGENCIA ARTIFICIAL CON MICROFONO INTEGRADO -->
+ <div style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+ <label style="font-size:14px; font-weight:bold; color:var(--primary);">🎙️ Buscador Inteligente Abierto:</label>
+ <input id="inputPreguntaIA" type="text" placeholder="Ej: ¿Cómo peleo un ticket de tránsito en Texas o qué ayudas hay?">
+ 
+ <!-- Botón de Micrófono Humano -->
+ <button id="btnMicrofono" onmousedown="iniciarGrabacionVoz()" onmouseup="detenerGrabacionVoz()" ontouchstart="iniciarGrabacionVoz()" ontouchend="detenerGrabacionVoz()" style="background:#dc2626; margin-top:8px; padding:12px; font-size:14px;">
+ 🎤 Mantén presionado para hablar (Máx 1 minuto)
+ </button>
+ 
+ <button onclick="consultarBuscadorLibreIA()" style="background:var(--primary); margin-top:8px; padding:12px; font-size:14px;">PREGUNTAR A LA IA PASO A PASO</button>
+ </div>
+
+ <!-- CONTENEDOR DE TARJETAS VISUALES DE UN SOLO CLIC -->
+ <label style="font-size:14px; font-weight:bold; display:block; margin-bottom:8px;">💼 Selección de Trámites y Compañías Obligatorias:</label> 
+ <select id="selectorTramite" style="margin-bottom:15px;"> 
+ <optgroup label="🌎 Pasaportes e Inmigración (Enfoque Latino)"> 
+ <option value="pasaporte_us">Pasaporte de Estados Unidos (Americano)</option> 
+ <option value="pasaporte_cu">Pasaporte de Cuba (Renovación de Librito)</option> 
+ <option value="pasaporte_mx">Pasaporte de México (Consulado Virtual)</option> 
+ <option value="pasaporte_ve">Pasaporte de Venezuela (SAIME)</option> 
+ <option value="pasaporte_co">Pasaporte de Colombia (Cancillería)</option> 
+ <option value="pasaporte_ca">Pasaportes de Centroamérica y Caribe (Honduras, Nicaragua, Salvador, Dominicana)</option> 
  </optgroup> 
- <optgroup label="💸 Remesas, Envíos de Dinero y Finanzas"> 
- <option value="remesas_envios">Envíos de Dinero (Western Union / Remitly)</option> 
- <option value="pagos_servicios">Pago de Facturas, Multas de Tránsito, Seguros y DMV</option> 
+ <optgroup label="💸 Remesas y Envíos de Dinero Obligatorios"> 
+ <option value="western_union">Western Union - Enviar Remesas</option> 
+ <option value="remitly">Remitly - Transferencias Familiares</option> 
  </optgroup> 
- <optgroup label="🏥 Salud, Clínicas y Soporte Público"> 
- <option value="clinicas_salud">Clínicas Locales del Condado y Hospitales Nacionales</option> 
+ <optgroup label="🚗 Utilidades, Facturas, Multas y DMV"> 
+ <option value="dmv_licencias">DMV - Sacar Licencia de Conducir y Carros</option> 
+ <option value="pagos_facturas">Pago de Facturas, Luz, Agua, Tickets de Tránsito y Seguros</option> 
  </optgroup> 
- <optgroup label="✈️ Logística y Transporte Multimodal"> 
- <option value="transporte_logistica">Transporte Total (Marítimo, Aéreo, Terrestre, Yates)</option> 
- </optgroup> 
- <optgroup label="🌴 Ocio, Turismo y Entretenimiento"> 
- <option value="ocio_entretenimiento">Hoteles, Restaurantes, Parques Recreativos y Gobierno</option> 
+ <optgroup label="🏥 Salud, Yates, Aviones y Ocio Recreativo"> 
+ <option value="clinicas_seguros">Clínicas Médicas del Condado y Hospitales Públicos</option> 
+ <option value="transporte_yates">Transporte Total (Vuelos, Trenes, Yates y Puertos)</option> 
+ <option value="ocio_parques">Guía de Ocio (Hoteles, Restaurantes y Parques del Gobierno)</option> 
  </optgroup> 
  </select> 
- </div> 
 
  <div style="margin-bottom: 15px;"> 
- <label for="inputDocumento" style="font-size:14px;">Confirme su Número de Documento (DPI / A-Number / Seguro):</label> 
- <input id="inputDocumento" type="text" placeholder="Ingrese sus datos oficiales de control"> 
+ <label for="inputDocumento" style="font-size:14px;">Confirme su Número de Documento Real (DPI / A-Number / Pasaporte):</label> 
+ <input id="inputDocumento" type="text" placeholder="Escriba sus datos oficiales aquí para avanzar"> 
  <p id="mensajeAlertaCaracteres" style="color: var(--danger); font-size: 13px; margin-top: 5px; display: none;"></p> 
- </div> 
-
- <div style="margin-bottom: 15px;"> 
- <label style="font-size:14px; display: block;">Subir Documentación o Fotos de Soporte (Si aplica):</label> 
- <input type="file" accept="image/*,application/pdf" multiple style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:white; margin-top:5px;"> 
  </div> 
 
  <button id="btnEjecutarServicio" onclick="enviarTramiteSsuperApp()">ABRIR PORTAL DIRECTO EN UN CLIC</button> 
 
  <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO --> 
- <div id="dev-login-box" class="card"> 
- <p class="small" style="font-weight:bold; margin-bottom:10px;">ACCESO DESARROLLADOR / ADMINISTRACIÓN</p> 
- <input id="devUser" type="text" placeholder="Usuario Desarrollador" style="margin-bottom:8px;"> 
- <input id="devPass" type="password" placeholder="Contraseña Desarrollador" style="margin-bottom:8px;"> 
- <p id="mensajeAlertaLogin" style="color: var(--danger); font-size: 12px; margin-bottom:8px; display:none;"></p> 
- <button onclick="ejecutarLoginDev(event)" style="background:#4b5563; padding:10px;">INGRESAR EN MODO SANDBOX</button> 
+ <div id="dev-login-box" class="card" style="display: none;"> 
+ <p class="small" style="font-weight:bold; margin-bottom:10px; color:var(--danger);">MODO SANDBOX: ACCESO PROGRAMADOR</p> 
+ <input id="devUser" type="text" placeholder="Usuario Oculto"> 
+ <input id="devPass" type="password" placeholder="Contraseña Oculta" style="margin-top:5px;"> 
+ <p id="mensajeAlertaLogin" style="color: var(--danger); font-size: 12px; margin-top:5px; display:none;"></p> 
+ <button onclick="ejecutarLoginDev(event)" style="background:#4b5563; padding:10px; margin-top:10px;">INGRESAR CON MIS LLAVES DE RENDER</button> 
  </div> 
  </div> 
 
  <!-- CORTINA LIMPIA DE ENFOQUE TOTAL ABSOLUTO --> 
  <div id="ventanaCortinaLimpia" class="card" style="display: none; border: 2px solid var(--primary); padding: 25px; text-align: center;"> 
  <h2 style="color: var(--success);">PORTAL SEGURO PREPARADO</h2> 
- <p class="small">RESOLUCIÓN DE ENLACES EXTERNOS AUTORIZADOS</p> 
+ <p class="small">RESOLUCIÓN FINAL SIN INTERMEDIARIOS NI TRABAS</p> 
  <div id="bloqueTextoVisualLimpio" style="background:#1f2937; padding:20px; border-radius:10px; text-align:left; font-size:15px; margin: 15px 0; line-height: 1.6;"></div> 
  <div id="zonaBotonesDescarga" style="display: flex; flex-direction: column; gap: 8px;"></div> 
- <button onclick="volverAlMenuDespejado()" style="background:transparent; border:1px solid var(--dim); margin-top:15px; width: auto; padding: 10px 20px;"> REGRESAR AL MENÚ PRINCIPAL </button> 
+ <button onclick="volverAlMenuDespejado()" style="background:transparent; border:1px solid var(--dim); margin-top:15px; width: auto; padding: 10px 20px;"> REGRESAR AL BUSCADOR PRINCIPAL </button> 
  </div> 
  </div> 
  </div> 
 
  <script src="/static/js/engine.js"></script> 
  <script> 
- // =========================================================
- // BANCO DE FRASES DE APOYO PSICOLÓGICO OBLIGATORIO
- // =========================================================
  const frasesApoyo = [
  "Tu paciencia es tu mayor virtud hoy. Todo gran proceso toma un momento para iniciar.",
  "Respira profundo. Estás tomando el control de tus metas y eso ya es un paso importante.",
@@ -110,93 +130,167 @@
  "No te dejes agobiar por el tiempo, el servidor está haciendo el trabajo pesado por ti hoy."
  ];
 
- // Respaldo local de la variable del plan por si no ha cargado engine.js a tiempo 
  const tipoPlanActual = sessionStorage.getItem("tipoPagoReal") || "evento"; 
 
- // CONTROL DE LOS DOS COBROS POR MODELO DE TIEMPO (MÁXIMO 20 MINUTOS POST-PAGO) 
+ // CONTROL DE COBROS: SÓLO EL PLAN EVENTO SE CIERRA A LOS 20 MINUTOS
  if (tipoPlanActual === "evento") {
  const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000; 
  setTimeout(function() { 
- alert("Su tiempo de sesión de 20 minutos para el Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o de negocio."); 
+ alert("Su tiempo de sesión de 20 minutos para Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o comercial."); 
  sessionStorage.clear(); 
  location.reload(); 
  }, TIEMPO_RESTRINGIDO_EVENTO); 
  }
 
- function iniciarDespertarYApoyo(event) { 
- if (event) event.preventDefault(); 
+ // LÓGICA SECRETA: 3 CLICS EN EL TÍTULO PARA ABRIR EL LOG-IN DEL PROGRAMADOR
+ let contadorClics = 0;
+ function contarClicsDesarrollador() {
+ contadorClics++;
+ if (contadorClics === 3) {
+ document.getElementById("dev-login-box").style.display = "block";
+ alert("Modo Sandbox Activado de forma interna. Panel de credenciales abierto.");
+ contadorClics = 0;
+ }
+ }
+
+ function mostrarExplicacionSistema() {
+ const bloque = document.getElementById("textoExplicativoLimpio");
+ bloque.style.display = bloque.style.display === "none" ? "block" : "none";
+ }
+
+ function iniciarDespertarYApoyo(event) {
+ if (event) event.preventDefault();
  
- let fraseElegida = ""; 
- const ultimaFrase = sessionStorage.getItem('ultimaFraseKamizen'); 
- let opcionesDisponibles = frasesApoyo.filter(f => f !== ultimaFrase); 
- if (opcionesDisponibles.length === 0) opcionesDisponibles = frasesApoyo; 
+ let fraseElegida = "";
+ const ultimaFrase = sessionStorage.getItem('ultimaFraseKamizen');
+ let opcionesDisponibles = frasesApoyo.filter(f => f !== ultimaFrase);
+ if (opcionesDisponibles.length === 0) opcionesDisponibles = frasesApoyo;
  
- fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)]; 
- sessionStorage.setItem('ultimaFraseKamizen', fraseElegida); 
+ fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)];
+ sessionStorage.setItem('ultimaFraseKamizen', fraseElegida);
  
- document.getElementById('cargaInicial').style.display = 'none'; 
- document.getElementById('textoApoyo').innerText = fraseElegida; 
- document.getElementById('pantallaApoyo').style.display = 'block'; 
+ document.getElementById('cargaInicial').style.display = 'none';
+ document.getElementById('textoApoyo').innerText = fraseElegida;
+ document.getElementById('pantallaApoyo').style.display = 'block';
  
  // Conexión real al endpoint /ping para desbloquear la pantalla tan pronto despierte el servidor
  fetch('/ping')
  .then(response => {
- document.getElementById('pantallaApoyo').style.display = 'none'; 
- document.getElementById('panelHerramientas').style.display = 'block'; 
+ document.getElementById('pantallaApoyo').style.display = 'none';
+ document.getElementById('panelHerramientas').style.display = 'block';
  if (typeof actualizarInterfazDeLimites === 'function') {
- actualizarInterfazDeLimites(); 
+ actualizarInterfazDeLimites();
  }
  })
  .catch(err => {
  console.log("Reintentando conexión con el servidor...");
  // Respaldo de seguridad por si tarda la red (abre el panel tras 8 segundos de fallo)
  setTimeout(() => {
- document.getElementById('pantallaApoyo').style.display = 'none'; 
- document.getElementById('panelHerramientas').style.display = 'block'; 
+ document.getElementById('pantallaApoyo').style.display = 'none';
+ document.getElementById('panelHerramientas').style.display = 'block';
  if (typeof actualizarInterfazDeLimites === 'function') {
- actualizarInterfazDeLimites(); 
+ actualizarInterfazDeLimites();
  }
  }, 8000);
  });
- } 
-
- function enviarTramiteSsuperApp() { 
- const selector = document.getElementById("selectorTramite"); 
- const inputDoc = document.getElementById("inputDocumento"); 
- const alerta = document.getElementById("mensajeAlertaCaracteres"); 
- const btn = document.getElementById("btnEjecutarServicio"); 
- const tramite = selector.value; 
- const documento = inputDoc.value.trim(); 
- 
- // VALIDACIÓN COMPLETAMENTE PACIENTE 
- if (documento === "") { 
- alerta.innerText = "¡Atención! Te hace falta completar el número de documento para que la aplicación pueda caminar."; 
- alerta.style.display = "block"; 
- return; 
- } 
- alerta.style.display = "none"; 
- btn.disabled = true; 
- btn.innerText = "Abriendo pasarela de comunicación asíncrona..."; 
- 
- fetch('/tramites_locales', { 
- method: 'POST', 
- headers: { 'Content-Type': 'application/json' }, 
- body: JSON.stringify({ tramite: tramite, dpi: documento }) 
- }) 
- .then(response => response.json()) 
- .then(data => { 
- btn.disabled = false; 
- btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC"; 
- if (typeof renderizarRespuestaLimpia === 'function') {
- renderizarRespuestaLimpia(data); 
  }
- }) 
- .catch(err => { 
- btn.disabled = false; 
- btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC"; 
- alert("Error de comunicación en los servidores de Render."); 
- }); 
- } 
+
+ function enviarTramiteSsuperApp() {
+ const selector = document.getElementById("selectorTramite");
+ const inputDoc = document.getElementById("inputDocumento");
+ const alerta = document.getElementById("mensajeAlertaCaracteres");
+ const btn = document.getElementById("btnEjecutarServicio");
+ const tramite = selector.value;
+ const documento = inputDoc.value.trim();
+ 
+ // REGLA PACIENTE CON EL CLIENTE
+ if (documento === "") {
+ alerta.innerText = "¡Atención! Te hace falta completar el número de documento para que la aplicación pueda caminar.";
+ alerta.style.display = "block";
+ return;
+ }
+ alerta.style.display = "none";
+ btn.disabled = true;
+ btn.innerText = "Abriendo pasarela de comunicación asíncrona...";
+ 
+ fetch('/tramites_locales', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ tramite: tramite, dpi: documento })
+ })
+ .then(response => response.json())
+ .then(data => {
+ btn.disabled = false;
+ btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC";
+ if (typeof renderizarRespuestaLimpia === 'function') {
+ renderizarRespuestaLimpia(data);
+ }
+ })
+ .catch(err => {
+ btn.disabled = false;
+ btn.innerText = "ABRIR PORTAL DIRECTO EN UN CLIC";
+ alert("Error de comunicación en los servidores de Render.");
+ });
+ }
+
+ function consultarBuscadorLibreIA() {
+ const inputPregunta = document.getElementById("inputPreguntaIA");
+ const inputDoc = document.getElementById("inputDocumento");
+ const pregunta = inputPregunta.value.trim();
+ const documento = inputDoc.value.trim();
+ if (pregunta === "") {
+ alert("Por favor, escribe una pregunta o duda para la Inteligencia Artificial.");
+ return;
+ }
+ fetch('/consultar', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ consulta: pregunta, dpi: documento })
+ })
+ .then(response => response.json())
+ .then(data => {
+ renderizarRespuestaLimpia(data);
+ })
+ .catch(err => alert("Error al conectar con el motor de Inteligencia Artificial."));
+ }
+
+ // =========================================================
+ // CONTROL HUMANO DE RECONOCIMIENTO DE VOZ (MICROFONO INTEGRADO)
+ // =========================================================
+ let reconocimientoVoz;
+ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+ const SpeechGen = window.SpeechRecognition || window.webkitSpeechRecognition;
+ reconocimientoVoz = new SpeechGen();
+ reconocimientoVoz.continuous = false;
+ reconocimientoVoz.lang = 'es-US'; 
+ reconocimientoVoz.onresult = function(event) {
+ const textoTranscribido = event.results[0][0].transcript;
+ document.getElementById("inputPreguntaIA").value = textoTranscribido;
+ document.getElementById("btnMicrofono").innerText = "🎤 Mantén presionado para hablar (Máx 1 minuto)";
+ document.getElementById("btnMicrofono").style.background = "#dc2626";
+ };
+ reconocimientoVoz.onerror = function() {
+ document.getElementById("btnMicrofono").innerText = "🎤 Error al escuchar. Intenta de nuevo.";
+ document.getElementById("btnMicrofono").style.background = "#dc2626";
+ };
+ }
+
+ function iniciarGrabacionVoz() {
+ if (reconocimientoVoz) {
+ window.speechSynthesis.cancel(); 
+ document.getElementById("btnMicrofono").innerText = "🔊 Escuchando con atención tu voz... ¡Habla ahora!";
+ document.getElementById("btnMicrofono").style.background = "#16a34a"; 
+ reconocimientoVoz.start();
+ } else {
+ alert("Tu navegador o teléfono celular no soporta la entrada por micrófono integrado.");
+ }
+ }
+
+ function detenerGrabacionVoz() {
+ if (reconocimientoVoz) {
+ reconocimientoVoz.stop();
+ }
+ }
  </script> 
 </body> 
 </html>
