@@ -450,7 +450,7 @@ MATRIZ_20_PAISES = {
             "PARAGUAYAN CONSULAR & VISA DOCUMENTATION\n\n"
             "Applicant Full Name: {nombre_completo}\n"
             "Passport Number: {numero_pasaporte}\n"
-            "Case Statement: {detalle_traducido}\n\n"
+            "Petition Details: {detalle_traducido}\n\n"
             "I certify under penalty of perjury that the information is true and correct.\n\n"
             "Date: {fecha_actual}\n\n"
             "Applicant Signature: _____________________________________\n"
@@ -567,47 +567,45 @@ def asistente_virtual():
     mensaje = datos.get("mensaje", "").strip().upper()
     dpi = datos.get("dpi", "").strip()
     
-    # Generador de respuesta experta y estructurada (Adiós a las respuestas vacías)
-    if "AJUSTE" in mensaje or "CUBANO" in mensaje:
-        cuerpo_respuesta = (
-            "<strong>Guía para Ley de Ajuste Cubano (Residencia I-485):</strong><br><br>"
-            "<table style='width:100%; border-collapse: collapse; background:#0f172a; color:#fff;'>"
-            "<tr style='border-bottom:1px solid #334155;'><th style='padding:8px; text-align:left;'>Paso Clave</th><th style='padding:8px; text-align:left;'>Acción Recomendada</th></tr>"
-            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>1. Inspección de Entrada</td><td style='padding:8px;'>Verifique su Formulario I-94 (Parole o entrada legal registrada).</td></tr>"
-            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>2. Permanencia</td><td style='padding:8px;'>Haber estado físicamente en EE. UU. por al menos 1 año y 1 día.</td></tr>"
-            "<tr><td style='padding:8px;'>3. Formulario Oficial</td><td style='padding:8px;'>Preparar la solicitud I-485 con evidencia de ciudadanía y examen médico (I-693).</td></tr>"
-            "</table><br>"
-            "<em>Sugerencia profesional:</em> Le convendría reunir sus documentos de identidad y entradas migratorias de forma ordenada antes de formalizar la petición para asegurar estabilidad en el proceso."
-        )
-    elif "PASAPORTE" in mensaje:
-        cuerpo_respuesta = (
-            "<strong>Orientación para Trámite de Pasaporte:</strong><br><br>"
-            "<table style='width:100%; border-collapse: collapse; background:#0f172a; color:#fff;'>"
-            "<tr style='border-bottom:1px solid #334155;'><th style='padding:8px; text-align:left;'>Verificación</th><th style='padding:8px; text-align:left;'>Detalle Operativo</th></tr>"
-            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>Vigencia Actual</td><td style='padding:8px;'>Compruebe que el documento actual esté próximo a vencer o requiere renovación consular.</td></tr>"
-            "<tr><td style='padding:8px;'>Soporte Documental</td><td style='padding:8px;'>Tenga a mano identificación secundaria y fotografías recientes bajo normas oficiales.</td></tr>"
-            "</table><br>"
-            "<em>Sugerencia profesional:</em> Es recomendable iniciar la gestión con anticipación para evitar contratiempos de movilidad internacional."
-        )
-    else:
-        cuerpo_respuesta = (
-            f"<strong>Asesoría orientativa para:</strong> {mensaje}<br><br>"
-            "<table style='width:100%; border-collapse: collapse; background:#0f172a; color:#fff;'>"
-            "<tr style='border-bottom:1px solid #334155;'><th style='padding:8px; text-align:left;'>Aspecto a Revisar</th><th style='padding:8px; text-align:left;'>Detalle de Acción</th></tr>"
-            "<tr style='border-bottom:1px solid #334155;'><td style='padding:8px;'>Evaluación inicial</td><td style='padding:8px;'>Verificar cumplimiento de requisitos normativos y vigencia de identificaciones.</td></tr>"
-            "<tr><td style='padding:8px;'>Estrategia sugerida</td><td style='padding:8px;'>Proceder con la recopilación de soportes y formatos oficiales aplicables.</td></tr>"
-            "</table><br>"
-            f"{(f'Identificador asociado ({dpi}) registrado correctamente.<br>' if dpi else '')}"
-            "<em>Sugerencia profesional:</em> Le invitamos a seguir los pasos indicados con tranquilidad para una resolución favorable."
-        )
+    # 1. Búsqueda exacta de la papelería en la Matriz de los 20 países
+    documento_real = ""
+    titulo_tramite = ""
+    destino = ""
+    
+    for key, item in MATRIZ_20_PAISES.items():
+        palabras_clave = [p for p in item["titulo"].upper().replace(":", "").replace(",", "").replace("(", "").replace(")", "").split() if len(p) > 3]
+        if any(palabra in mensaje for palabra in palabras_clave):
+            documento_real = item["formato_limpio"]
+            titulo_tramite = item["titulo"]
+            destino = item["destino_oficial"]
+            break
+            
+    # 2. Si no hay coincidencia directa, se despliega por defecto el formato cotidiano o general
+    if not documento_real:
+        documento_real = MATRIZ_20_PAISES["transversal_cotidiano"]["formato_limpio"]
+        titulo_tramite = MATRIZ_20_PAISES["transversal_cotidiano"]["titulo"]
+        destino = MATRIZ_20_PAISES["transversal_cotidiano"]["destino_oficial"]
+
+    # 3. Forzar salida completa con la papelería y el documento legal listo
+    cuerpo_respuesta = (
+        f"<strong>PAPELERÍA OFICIAL GENERADA: {titulo_tramite}</strong><br><br>"
+        "<table style='width:100%; border-collapse: collapse; background:#0f172a; color:#fff; margin-bottom: 15px; text-align: left;'>"
+        "<tr style='border-bottom:1px solid #334155;'><th style='padding:8px;'>Entidad de Recepción / Destino Oficial</th><th style='padding:8px;'>Estado del Formulario</th></tr>"
+        f"<tr><td style='padding:8px;'>{destino}</td><td style='padding:8px;'>Documento Oficial Listo para Actualizar</td></tr>"
+        "</table>"
+        "<div style='background:#1e293b; padding:15px; border-left:4px solid #3b82f6; font-family: monospace; white-space: pre-wrap; color:#e2e8f0;'>"
+        f"{documento_real}"
+        "</div><br>"
+        "<em>Instrucción: Complete los campos requeridos en el formato superior. Este es el documento exacto y obligatorio para su gestión.</em>"
+    )
 
     if dpi:
-        cuerpo_respuesta += f"<br><br><small>Referencia de expediente / ID: <b>{dpi}</b></small>"
+        cuerpo_respuesta += f"<br><br><small>Expediente / ID de Registro: <b>{dpi}</b></small>"
     
     return jsonify({
         "status": "success",
         "respuesta": cuerpo_respuesta,
-        "voz_texto": limpiar_texto_para_voz("Hemos preparado su guía experta con tablas y pasos claros. Revise los detalles en pantalla para proceder con confianza.")
+        "voz_texto": limpiar_texto_para_voz("Aquí tiene la papelería y el formulario exacto en pantalla. Complételo para finalizar su gestión.")
     }), 200
 
 if __name__ == '__main__':
