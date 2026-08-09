@@ -4,7 +4,6 @@ import hmac
 from flask import Flask, request, jsonify, session, render_template
 
 app = Flask(__name__)
-# Secure production session key linked directly to Render environment variables
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "MAY_ROGA_LLC_BOLSILLO_LATINO_SECURE_TOKEN_2026")
 
 # =========================================================
@@ -20,7 +19,6 @@ DEV_USER = os.environ.get("DEV_USER", "admin")
 DEV_PASS = os.environ.get("DEV_PASS", "root")
 
 def limpiar_texto_para_voz(texto):
-    # Strips raw markdown notation formatting completely for native speech loops
     return re.sub(r'[\*\#\-]', '', texto).strip()
 
 @app.route('/ping', methods=['GET'])
@@ -165,33 +163,37 @@ BASE_DATOS_TRAMITES = {
 def asistente():
     datos = request.json or {}
     mensaje = datos.get("mensaje", "").lower().strip()
-    idioma = datos.get("idioma", "en") # Por defecto inglés como requiere el sistema principal
+    idioma = datos.get("idioma", "es")
     
-    # Respuesta por defecto para mantener el hilo
     respuesta_texto = "I am ready to assist you. Please provide more details or select a service."
-    enlace_accion = ""
+    botones = []
 
-    # Búsqueda inteligente en la base de datos de trámites y utilidades
     for clave, info in BASE_DATOS_TRAMITES.items():
         if any(palabra in mensaje for palabra in clave.split('_')) or any(palabra in mensaje for palabra in info['titulo'].lower().split()):
             if idioma == "es":
                 respuesta_texto = f"**{info['titulo']}**\n\n{info['guia']}\n\n{info['correo']}"
             else:
                 respuesta_texto = f"**{info['titulo']}**\n\n{info['guia']}\n\n{info['correo']}"
-            enlace_accion = info['url']
+            
+            botones.append({
+                "texto": f"Imprimir / Guardar: {info['titulo']}",
+                "url": info['url']
+            })
             break
 
-    # Si se pide traducción explícita al español
-    if idioma == "es" and not enlace_accion:
-        respuesta_texto = "Entiendo perfectamente su solicitud. Procedemos a gestionar el trámite o la consulta bajo los lineamientos oficiales establecidos para garantizar el éxito de su diligencia."
+    if not botones:
+        botones.append({
+            "texto": "Portal Oficial General",
+            "url": "https://usa.gov"
+        })
 
     voz_texto = limpiar_texto_para_voz(respuesta_texto)
 
     return jsonify({
         "status": "success",
         "respuesta": respuesta_texto,
-        "voz": voz_texto,
-        "url": enlace_accion
+        "voz_texto": voz_texto,
+        "botones": botones
     }), 200
 
 # =========================================================
@@ -202,17 +204,15 @@ def crear_sesion_pago():
     datos = request.json or {}
     plan = datos.get("plan", "1")
     
-    # Mapeo de precios configurados para la plataforma
     precios = {
-        "1": STRIPE_PRICE_ID1, # $15.99
-        "2": STRIPE_PRICE_ID2, # $30.99
-        "3": STRIPE_PRICE_ID3  # $149.99
+        "1": STRIPE_PRICE_ID1,
+        "2": STRIPE_PRICE_ID2,
+        "3": STRIPE_PRICE_ID3
     }
     
     price_id = precios.get(plan, STRIPE_PRICE_ID1)
     
     if not STRIPE_SECRET_KEY or not price_id:
-        # Modo de respaldo seguro en entorno de pruebas/desarrollo
         session["autenticado"] = True
         session["tipo_pago"] = plan
         return jsonify({"status": "success", "url": "/app?pagado=true"}), 200
@@ -240,9 +240,6 @@ def verificar_acceso():
         return jsonify({"acceso": True, "tipo": session.get("tipo_pago", "1")}), 200
     return jsonify({"acceso": False}), 200
 
-# =========================================================
-# INICIALIZACIÓN DEL SERVIDOR FLASK (RENDER PRODUCTION)
-# =========================================================
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
