@@ -561,6 +561,22 @@ def verificar_acceso():
         return jsonify({"acceso": True, "tipo": session.get("tipo_pago", "1")}), 200
     return jsonify({"acceso": False}), 200
 
+@app.route('/api/asistente', methods=['POST'])
+def asistente_virtual():
+    datos = request.json or {}
+    pregunta = datos.get("pregunta", "").strip()
+    
+    respuesta_texto = (
+        "Asesoría registrada correctamente. "
+        "Por favor, verifique los datos ingresados en el formulario y proceda a generar su documento oficial."
+    )
+    
+    return jsonify({
+        "status": "success",
+        "respuesta": respuesta_texto,
+        "voz_texto": limpiar_texto_para_voz(respuesta_texto)
+    }), 200
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
