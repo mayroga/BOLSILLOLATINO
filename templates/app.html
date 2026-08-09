@@ -3,70 +3,111 @@
 <head> 
  <meta charset="UTF-8" /> 
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
- <title>BolsilloLatino - Tu Ventanilla Única de Soluciones</title> 
+ <title>BolsilloLatino - Directorio y Soluciones Inteligentes</title> 
  <link rel="stylesheet" href="/static/styles.css"> 
+ <style>
+   /* Ajustes de tipografía clara y elementos colapsables */
+   body {
+     font-size: 18px; /* Fuente grande y muy visible para evitar fatiga */
+   }
+   .accordion-bar {
+     background: #1e293b;
+     color: #3b82f6;
+     padding: 15px;
+     border-radius: 10px;
+     cursor: pointer;
+     font-weight: bold;
+     text-align: center;
+     margin-top: 10px;
+     border: 1px solid rgba(255,255,255,0.1);
+     user-select: none;
+   }
+   .accordion-content {
+     display: none;
+     background: #111a2e;
+     padding: 15px;
+     border-radius: 0 0 10px 10px;
+     border: 1px solid rgba(255,255,255,0.05);
+     line-height: 1.6;
+   }
+ </style>
 </head> 
 <body> 
  <div id="main-container"> 
  
- <!-- TÍTULO PRINCIPAL INTERACTIVO: 3 CLICS ABREN EL INICIO DE SESIÓN DE DESARROLLADOR -->
+ <!-- TÍTULO PRINCIPAL: 3 CLICS ACTIVAN EL MODO PROGRAMADOR OCULTO -->
  <div id="cabeceraGlobal" class="card center" onclick="contarClicsDesarrollador()" style="cursor: pointer; user-select: none;"> 
- <h2 style="color:var(--primary); margin:0;">BolsilloLatino</h2> 
- <p class="small" style="margin:5px 0 0 0;">Asesoría Técnica y Enlaces Directos • Sin Errores y Con Pantalla Limpia</p> 
+  <h2 style="color:var(--primary); margin:0; font-size: 32px;">BolsilloLatino</h2> 
+  <p class="small" style="margin:5px 0 0 0; font-size: 14px;">Tu guía de trámites y servicios en Estados Unidos</p> 
  </div> 
 
- <!-- BOTÓN DE EXPLICACIÓN DETALLADA: CONECTA AL SERVIDOR MIENTRAS EL CLIENTE LEE -->
+ <!-- BOTÓN EXPLICATIVO INICIAL CON BARRA PARA DESPLEGAR EL TEXTO PASO A PASO -->
  <div id="bloqueExplicativoBoton" class="card center">
-  <button onclick="mostrarExplicacionSistema()" style="background: #4b5563;">¿Para qué sirve esta aplicación verdadera? (Presione Aquí)</button>
-  <div id="textoExplicativoLimpio" style="display:none; text-align:left; font-size:15px; margin-top:15px; background:#1f2937; padding:20px; border-radius:12px; line-height:1.6; color:var(--text);">
-   <strong>¡Bienvenido a tu Espacio Seguro de Soluciones!</strong><br><br>
-   Esta herramienta fue hecha para ayudarte a rellenar tus papeles oficiales tú mismo, sin miedo a equivocarte y sin pagar tarifas exageradas en agencias. Aquí puedes hacer todo paso a paso, despacio y con la mente tranquila. El sistema funciona con dos formas de pago: un acceso de <strong>$15.99 USD</strong> para usar un solo servicio, y un plan de suscripción mensual de <strong>$30.99 USD</strong> ($149.99 USD para oficinas o negocios).<br><br>
-   
-   <strong>¿Qué problemas resolvemos por ti en un solo clic?</strong><br>
-   • <strong>Trámites y Formularios de Inmigración Reales:</strong> Llenas todo cómodamente en español. Si el documento es de entrega obligatoria en inglés ante el gobierno (como la Residencia por Ley de Ajuste Cubano, Parole Humanitario, Asilos, Perdones, Peticiones Familiares, Permisos de Trabajo o los Pasaportes Americanos y Cubanos), al momento de presionar <strong>Guardar o Imprimir</strong>, el sistema lo traduce y convierte automáticamente al inglés oficial original. Las demás cartas privadas se quedan impresas en español.<br>
-   • <strong>Licencias de Conducir y Multas (DMV):</strong> Te guiamos despacio para sacar tu licencia en cualquier estado o para revisar y solucionar tickets de tránsito sin enredos.<br>
-   • <strong>Tus Enlaces Obligatorios del Día a Día:</strong> Acceso directo a los portales oficiales de Western Union y Remitly para tus remesas, además del pago de facturas, luz, agua y utilidades del hogar.<br>
-   • <strong>Ayudas Públicas Locales:</strong> Localizador directo de clínicas médicas gratuitas del condado, hospitales públicos, seguros de salud y bancos de alimentos en todo el país.<br>
-   • <strong>Tu Guía Total de Ocio, Logística y Entretenimiento:</strong> Encuentra con un solo clic los accesos oficiales para viajar en Uber, Lyft, trenes, aviones o cruceros, junto con directorios de hoteles, cafeterías de la zona, restaurantes latinos, playas, parques recreativos, centros de diversión, zoológicos, acuarios, balnearios, piscinas y actividades culturales.
+  <button onclick="mostrarExplicacionSistema()" style="background: #4b5563; font-size: 18px;">¿Para qué sirve esta aplicación verdadera? (Presione Aquí)</button>
+  
+  <div id="textoExplicativoLimpio" style="display:none; margin-top:15px;">
+    
+    <div class="accordion-bar" onclick="conmutarBarra('info-pagos')">▼ Formas de Pago Disponibles</div>
+    <div id="info-pagos" class="accordion-content">
+      Contamos con tres opciones de acceso seguro:<br>
+      1. Un pago de <strong>$15.99 USD</strong> para usar un solo servicio por 20 minutos.<br>
+      2. Una suscripción personal de <strong>$30.99 USD</strong> para usarla todo el mes.<br>
+      3. Un plan comercial de <strong>$149.99 USD</strong> al mes para oficinas y agencias de trámites.
+    </div>
+
+    <div class="accordion-bar" onclick="conmutarBarra('info-papeles')">▼ Papeles de Inmigración y Pasaportes</div>
+    <div id="info-papeles" class="accordion-content">
+      Te ayudamos a rellenar tus documentos oficiales sin cometer errores humanos. Puedes completar tus datos despacio en español. Si el trámite exige entregarse en inglés ante el gobierno (como la Residencia por Ley de Ajuste Cubano, Parole, Asilos, Permisos de Trabajo o Pasaportes Americanos y de toda Latinoamérica), al presionar <strong>Guardar o Imprimir</strong>, el sistema lo convierte automáticamente al inglés original.
+    </div>
+
+    <div class="accordion-bar" onclick="conmutarBarra('info-diario')">▼ Servicios Diarios y Licencias (DMV)</div>
+    <div id="info-diario" class="accordion-content">
+      Revisa y soluciona tus multas de tránsito o los requisitos para sacar tu licencia de conducir en cualquier estado. También incluye enlaces directos en un solo clic para enviar remesas por Western Union y Remitly, o pagar facturas de luz, agua y utilidades de tu hogar.
+    </div>
+
+    <div class="accordion-bar" onclick="conmutarBarra('info-ocio')">▼ Ayudas Locales, Logística y Ocio</div>
+    <div id="info-ocio" class="accordion-content">
+      Encuentra de inmediato clínicas gratuitas del condado, bancos de comida, y accesos directos para transporte en Uber, Lyft, trenes, vuelos o cruceros. Además, tienes directorios de cafeterías locales, restaurantes de comida latina, playas, parques, zoológicos, acuarios, balnearios, piscinas y actividades recreativas en todo el país.
+    </div>
+
   </div>
  </div>
 
  <div id="app"> 
-  <!-- VENTANA LIMPIA DE APOYO EMOCIONAL: ESCONDE TODO MIENTRAS RENDER SE ENCIENDE --> 
+  <!-- VENTANA LIMPIA DE APOYO EMOCIONAL Y ANTI-ESTRÉS MIENTRAS RENDER SE ENCIENDE --> 
   <div id="pantallaApoyo" style="display: none; padding: 40px 10px; text-align: center;"> 
    <div class="spinner"></div> 
-   <h2 id="textoApoyo" style="color: var(--text); font-size: 22px; line-height: 1.6; font-weight: 500; margin-bottom: 20px;"></h2> 
-   <p style="color: var(--dim); font-size: 14px;">Conectando de forma privada con los servidores gubernamentales y comerciales de Estados Unidos. Por favor espere...</p> 
+   <h2 id="textoApoyo" style="color: var(--text); font-size: 24px; line-height: 1.6; font-weight: bold; margin-bottom: 20px;"></h2> 
+   <p style="color: var(--dim); font-size: 16px;">Conectando de forma privada y segura con tu trámite. Por favor espere...</p> 
   </div> 
 
-  <!-- PANTALLA INICIAL DE CONEXIÓN CON UN SOLO CLIC --> 
+  <!-- PANTALLA INICIAL DE ACCESO --> 
   <div id="cargaInicial" class="card center"> 
    <h3>INITIALIZING SYSTEM...</h3> 
-   <p>Sincronizando motores de control panhispánicos. Por favor espere.</p> 
+   <p>Sincronizando motores de control. Por favor espere.</p> 
    <button onclick="iniciarDespertarYApoyo(event)" style="margin-top: 15px;">CONECTAR AL SISTEMA</button> 
   </div> 
 
-  <!-- PANEL DE HERRAMIENTAS PRINCIPAL (TOTALMENTE DESPEJADO Y OCULTO HASTA ENTRAR) --> 
+  <!-- PANEL DE HERRAMIENTAS PRINCIPAL (DESPEJADO DE FORMA MOMENTÁNEA) --> 
   <div id="panelHerramientas" class="card" style="display: none;"> 
-   <p id="etiquetaPlanActual" style="font-weight: bold; color: var(--success); font-size: 14px; margin: 0 0 5px 0;"></p> 
-   <p id="contadorDescargasRestantes" style="color: var(--dim); font-size: 13px; margin: 0 0 15px 0;"></p> 
+   <p id="etiquetaPlanActual" style="font-weight: bold; color: var(--success); font-size: 16px; margin: 0 0 5px 0;"></p> 
+   <p id="contadorDescargasRestantes" style="color: var(--dim); font-size: 14px; margin: 0 0 15px 0;"></p> 
 
-   <!-- 🎙️ CAJA DE BÚSQUEDA GENERAL LIBRE CON RECONOCIMIENTO DE VOZ INTEGRADO -->
+   <!-- BUSCADOR CON MICRÓFONO INTEGRADO -->
    <div style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
-    <label style="font-size:14px; font-weight:bold; color:var(--primary); display:block; margin-bottom:5px;">🎙️ Buscador Inteligente Abierto (Habla o Escribe):</label>
-    <input id="inputPreguntaIA" type="text" placeholder="Ej: ¿Cómo pido mi residencia por Ley de Ajuste o qué ayudas hay en mi zona?">
+    <label style="font-size:16px; font-weight:bold; color:var(--primary); display:block; margin-bottom:5px;">🎙️ Buscador Abierto (Habla o Escribe):</label>
+    <input id="inputPreguntaIA" type="text" placeholder="Ej: ¿Cómo pido mi residencia por Ley de Ajuste o qué ayudas hay?" style="font-size: 16px;">
     
-    <!-- Botón de Micrófono con Grabación de hasta 1 Minuto -->
-    <button id="btnMicrofono" onmousedown="iniciarGrabacionVoz()" onmouseup="detenerGrabacionVoz()" style="background:#dc2626; margin-top:8px; padding:12px; font-size:14px;">
-     🎤 Mantén presionado para hablar (Dictar pregunta)
+    <button id="btnMicrofono" onmousedown="iniciarGrabacionVoz()" onmouseup="detenerGrabacionVoz()" style="background:#dc2626; margin-top:8px; padding:12px; font-size:16px;">
+     🎤 Mantén presionado para hablar (Dictar duda)
     </button>
     
-    <button onclick="consultarBuscadorLibreIA()" style="background:var(--primary); margin-top:8px; padding:12px; font-size:14px;">PREGUNTAR A LA IA PASO A PASO</button>
+    <button onclick="consultarBuscadorLibreIA()" style="background:var(--primary); margin-top:8px; padding:12px; font-size:16px;">BUSCAR INFORMACIÓN PASO A PASO</button>
    </div>
 
-   <!-- SELECTOR CATEGORIZADO DE COMPAÑÍAS Y PAPELEO DE USO OBLIGATORIO -->
-   <label style="font-size:14px; font-weight:bold; display:block; margin-bottom:8px;">💼 Ventanas Directas de Trámites, Ocio y Servicios Públicos:</label> 
-   <select id="selectorTramite" style="margin-bottom:15px;"> 
+   <!-- SELECTOR DE VENTANAS DIRECTAS -->
+   <label style="font-size:16px; font-weight:bold; display:block; margin-bottom:8px;">💼 Ventanas Directas de Trámites y Servicios:</label> 
+   <select id="selectorTramite" style="font-size: 16px; margin-bottom:15px;"> 
     <optgroup label="🇺🇸 Trámites e Inmigración Oficial en USA"> 
      <option value="pasaporte_us">Pasaporte de Estados Unidos (Americano)</option> 
      <option value="ajuste_cubano">Ley de Ajuste Cubano (Residencia I-485 / Parole / Asilos)</option> 
@@ -102,7 +143,7 @@
    </select>
    <div style="margin-bottom: 15px;"> 
     <label for="inputDocumento" style="font-size:14px;">Confirme su Número de Documento Real (DPI / A-Number / Pasaporte):</label> 
-    <input id="inputDocumento" type="text" placeholder="Escriba sus datos oficiales aquí para avanzar"> 
+    <input id="inputDocumento" type="text" placeholder="Escriba sus datos oficiales aquí para avanzar" style="font-size: 16px;"> 
     <p id="mensajeAlertaCaracteres" style="color: var(--danger); font-size: 13px; margin-top: 5px; display: none;"></p> 
    </div> 
 
@@ -111,9 +152,9 @@
     <input type="file" accept="image/*,application/pdf" multiple style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; color:white; margin-top:5px;"> 
    </div> 
 
-   <button id="btnEjecutarServicio" onclick="enviarTramiteSsuperApp()">ABRIR PORTAL DIRECTO EN UN CLIC</button> 
+   <button id="btnEjecutarServicio" onclick="enviarTramiteSsuperApp()" style="font-size: 16px;">ABRIR PORTAL DIRECTO EN UN CLIC</button> 
 
-   <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO (OCULTO POR DEFECTO) --> 
+   <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO (SE QUEDA OCULTO POR DEFECTO) --> 
    <div id="dev-login-box" class="card" style="display: none;"> 
     <p class="small" style="font-weight:bold; margin-bottom:10px; color:var(--danger);">MODO SANDBOX: ACCESO PROGRAMADOR</p> 
     <input id="devUser" type="text" placeholder="Usuario Oculto"> 
@@ -123,43 +164,42 @@
    </div> 
   </div> 
 
-  <!-- ========================================================= -->
-  <!-- CORTINA LIMPIA DE ENFOQUE TOTAL (ESCONDE EL FONDO CONTRA EL MIEDO) --> 
-  <!-- ========================================================= -->
+  <!-- CORTINA LIMPIA DE ENFOQUE TOTAL ABSOLUTO (ESCONDE TODO EL FONDO CONTRA EL MIEDO) --> 
   <div id="ventanaCortinaLimpia" class="card" style="display: none; border: 2px solid var(--primary); padding: 25px; text-align: center;"> 
-   <h2 style="color: var(--success);">PORTAL SEGURO PREPARADO</h2> 
+   <h2 style="color: var(--success); font-size: 24px;">PORTAL SEGURO PREPARADO</h2> 
    <p class="small">RESOLUCIÓN FINAL SIN INTERMEDIARIOS NI TRABAS</p> 
-   <div id="bloqueTextoVisualLimpio" style="background:#1f2937; padding:20px; border-radius:10px; text-align:left; font-size:15px; margin: 15px 0; line-height: 1.6;"></div> 
+   <div id="bloqueTextoVisualLimpio" style="background:#1f2937; padding:20px; border-radius:10px; text-align:left; font-size:16px; margin: 15px 0; line-height: 1.6;"></div> 
    <div id="zonaBotonesDescarga" style="display: flex; flex-direction: column; gap: 8px;"></div> 
-   <button onclick="volverAlMenuDespejado()" style="background:transparent; border:1px solid var(--dim); margin-top:15px; width: auto; padding: 10px 20px;"> REGRESAR AL BUSCADOR PRINCIPAL </button> 
+   <button onclick="volverAlMenuDespejado()" style="background:transparent; border:1px solid var(--dim); margin-top:15px; width: auto; padding: 10px 20px; font-size: 16px;"> REGRESAR AL BUSCADOR PRINCIPAL </button> 
   </div> 
  </div> 
 </div> 
 
 <script src="/static/js/engine.js"></script> 
 <script> 
+ // FRASES BONITAS DE ACOMPAÑAMIENTO, ANTI-ESTRÉS Y DESCANSO (SIEMPRE DIFERENTES)
  const frasesApoyo = [
- "Tu paciencia es tu mayor virtud hoy. Todo gran proceso toma un momento para iniciar.",
- "Respira profundo. Estás tomando el control de tus metas y eso ya es un paso importante.",
- "El éxito no lleva prisa. Estamos ordenando tu entorno para que todo salga perfecto.",
- "Mantén la mente en calma, la tranquilidad abre todas las puertas al conocimiento.",
- "Un momento de espera en silencio fortalece tu autodisciplina y tu enfoque mental.",
- "Estás haciendo las cosas bien. En menos de un minuto tendrás el control en tus manos.",
- "La seguridad y la claridad requieren su tiempo. Gracias por tu valiosa constancia.",
- "Relaja los hombros y respira. Tu sesión se está configurando de forma segura.",
- "Cada segundo de espera es un espacio de meditación para iniciar con máxima potencia.",
- "Estás usando un sistema diseñado para tu crecimiento. Tu espacio seguro se está activando.",
- "La paciencia es una habilidad de campeones. El sistema ya casi está listo.",
- "No te dejes agobiar por el tiempo, el servidor está haciendo el trabajo pesado por ti hoy."
+ "Estás en un lugar seguro. Respira profundo, relaja los hombros y tómate este momento para descansar la mente.",
+ "Haces un gran esfuerzo cada día. Mantén la calma y la paz en tu corazón, estamos ordenando todo para ti.",
+ "No dejes que las preocupaciones te quiten el sueño hoy. Todo se va a resolver paso a paso y de forma correcta.",
+ "Regálate un momento de tranquilidad y silencio. Estás tomando buenas decisiones para tu futuro.",
+ "La paciencia nos hace fuertes. Disfruta este pequeño instante de descanso mientras preparamos tu espacio.",
+ "Estás haciendo las cosas bien. Confía en el proceso y regálale una sonrisa a este nuevo día.",
+ "Respira con suavidad. Tu tranquilidad y bienestar son lo más valioso que tienes ahora mismo.",
+ "La calma es tu superpoder. Deja el estrés afuera, aquí cuidamos de ti y de tus trámites con paciencia.",
+ "Todo proceso importante requiere su tiempo. Relájate, toma un poco de agua y descansa tu mente.",
+ "Eres capaz de superar cualquier reto en este país. Estamos listos para acompañarte con total seguridad.",
+ "Mantén la mente clara y libre de miedos. Tu camino es hacia adelante y todo saldrá muy bien.",
+ "Un corazón tranquilo ve las soluciones más rápido. Relájate por completo, ya casi estamos listos."
  ];
 
  const tipoPlanActual = sessionStorage.getItem("tipoPagoReal") || "evento"; 
 
- // CONTROL DE COBROS: SÓLO EL PLAN DE UN SOLO SERVICIO SE CIERRA A LOS 20 MINUTOS
+ // CONTROL DE COBROS: SÓLO EL PLAN EVENTO SE CIERRA A LOS 20 MINUTOS
  if (tipoPlanActual === "evento") {
  const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000; 
  setTimeout(function() { 
- alert("Su tiempo de sesión de 20 minutos para el Plan de Uso para un Solo Servicio ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o comercial."); 
+ alert("Su tiempo de sesión de 20 minutos para el Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o comercial."); 
  sessionStorage.clear(); 
  location.reload(); 
  }, TIEMPO_RESTRINGIDO_EVENTO); 
@@ -181,6 +221,15 @@
  bloque.style.display = bloque.style.display === "none" ? "block" : "none";
  }
 
+ function conmutarBarra(idElemento) {
+ const barra = document.getElementById(idElemento);
+ // Escondemos las demás primero para mantener la pantalla despejada y limpia sin agobios
+ document.querySelectorAll('.accordion-content').forEach(cont => {
+   if (cont.id !== idElemento) cont.style.display = 'none';
+ });
+ barra.style.display = barra.style.display === "block" ? "none" : "block";
+ }
+
  function iniciarDespertarYApoyo(event) { 
  if (event) event.preventDefault(); 
  fetch('/ping').catch(err => console.log("Despertando Render...")); 
@@ -193,6 +242,7 @@
  fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)]; 
  sessionStorage.setItem('ultimaFraseKamizen', fraseElegida); 
  
+ // ESCONDEMOS CUALQUIER ELEMENTO QUE PUEDA ESTAR ARRIBA DE OTRO MOMENTÁNEAMENTE
  document.getElementById('cargaInicial').style.display = 'none'; 
  document.getElementById('bloqueExplicativoBoton').style.display = 'none'; 
  document.getElementById('textoApoyo').innerText = fraseElegida; 
@@ -204,7 +254,7 @@
  if (typeof actualizarInterfazDeLimites === 'function') {
  actualizarInterfazDeLimites(); 
  }
- }, 40000); 
+ }, 40000); // 40 segundos dedicados al acompañamiento mientras Render se despierta
  } 
 
  function enviarTramiteSsuperApp() { 
@@ -215,7 +265,6 @@
  const tramite = selector.value; 
  const documento = inputDoc.value.trim(); 
  
- // REGLA PACIENTE CON EL CLIENTE: INDICA EL DATO EXACTO QUE FALTA
  if (documento === "") { 
  alerta.innerText = "¡Atención! Te hace falta completar el número de documento para que la aplicación pueda caminar."; 
  alerta.style.display = "block"; 
@@ -252,7 +301,7 @@
  const documento = inputDoc.value.trim();
 
  if (pregunta === "") {
- alert("Por favor, escribe una pregunta o duda para la Inteligencia Artificial.");
+ alert("Por favor, escribe una pregunta o duda para continuar.");
  return;
  }
 
@@ -265,12 +314,9 @@
  .then(data => {
  renderizarRespuestaLimpia(data);
  })
- .catch(err => alert("Error al conectar con el motor de Inteligencia Artificial."));
+ .catch(err => alert("Error al conectar con el sistema."));
  }
 
- // =========================================================
- // CONTROL HUMANO DE RECONOCIMIENTO DE VOZ (MICROFONO INTEGRADO)
- // =========================================================
  let reconocimientoVoz;
  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
  const SpeechGen = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -279,9 +325,9 @@
  reconocimientoVoz.lang = 'es-US'; 
 
  reconocimientoVoz.onresult = function(event) {
- const textoTranscribido = event.results[0][0].transcript;
+ const textoTranscribido = event.results[0].transcript;
  document.getElementById("inputPreguntaIA").value = textoTranscribido;
- document.getElementById("btnMicrofono").innerText = "🎤 Mantén presionado para hablar (Dictar pregunta)";
+ document.getElementById("btnMicrofono").innerText = "🎤 Mantén presionado para hablar (Dictar duda)";
  document.getElementById("btnMicrofono").style.background = "#dc2626";
  };
 
@@ -298,7 +344,7 @@
  document.getElementById("btnMicrofono").style.background = "#16a34a"; 
  reconocimientoVoz.start();
  } else {
- alert("Tu navegador o teléfono celular no soporta la entrada por micrófono integrado.");
+ alert("Tu dispositivo no soporta la entrada por micrófono integrado.");
  }
  }
 
@@ -307,6 +353,6 @@
  reconocimientoVoz.stop();
  }
  }
-</script> 
+ </script> 
 </body> 
 </html>
