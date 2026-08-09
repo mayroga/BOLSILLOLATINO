@@ -1,10 +1,10 @@
 import os
 import re
 import hmac
-from flask import Flask, request, jsonify, session, redirect, url_for
+from flask import Flask, request, jsonify, session, render_template, redirect, url_for
 
 app = Flask(__name__)
-# Captura la llave de sesión de Render o usa una por defecto segura
+# Captura la llave secreta desde las variables de entorno seguras de Render
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "MAY_ROGA_LLC_SUPER_SECRET_TOKEN_USA")
 
 # =========================================================
@@ -13,14 +13,17 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "MAY_ROGA_LLC_SUPER_SECRET_T
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
-STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID")
-DEV_USER = os.environ.get("DEV_USER", "admin")  # Usuario desarrollador por defecto
-DEV_PASS = os.environ.get("DEV_PASS", "root")   # Contraseña desarrolladora por defecto
+STRIPE_PRICE_ID1 = os.environ.get("STRIPE_PRICE_ID1")  # Tarifa: $15.99
+STRIPE_PRICE_ID2 = os.environ.get("STRIPE_PRICE_ID2")  # Tarifa: $30.99
+STRIPE_PRICE_ID3 = os.environ.get("STRIPE_PRICE_ID3")  # Tarifa: $149.99
+DEV_USER = os.environ.get("DEV_USER", "admin")
+DEV_PASS = os.environ.get("DEV_PASS", "root")
 
 # =========================================================
 # HELPER: LIMPIEZA DE AUDIO DE ALTA VELOCIDAD
 # =========================================================
 def limpiar_texto_para_voz(texto):
+    # Remueve estrictamente asteriscos, numerales y guiones de lista para el altavoz
     texto_limpio = re.sub(r'[\*\#\-]', '', texto)
     return texto_limpio.strip()
 
@@ -32,6 +35,15 @@ def ping():
     return jsonify({"status": "ready"}), 200
 
 # =========================================================
+# RUTA VISUAL PRINCIPAL (EVITA EL ERROR URL NOT FOUND)
+# =========================================================
+@app.route('/')
+@app.route('/app')
+def index():
+    # Abre la plantilla app.html que está en tu carpeta /templates/
+    return render_template('app.html')
+
+# =========================================================
 # CONTROL DE ACCESO DE CREDENCIALES (DEV LOGIN)
 # =========================================================
 @app.route('/login_dev', methods=['POST'])
@@ -40,10 +52,10 @@ def login_dev():
     usuario = datos.get("username")
     clave = datos.get("password")
 
-    # Validación segura utilizando hmac para evitar ataques de tiempo
+    # Validación segura utilizando hmac para comparar cadenas limpias
     if usuario and clave and hmac.compare_digest(usuario, DEV_USER) and hmac.compare_digest(clave, DEV_PASS):
         session["autenticado"] = True
-        session["tipo_pago"] = "negocio"  # El desarrollador entra con permisos ilimitados de pruebas
+        session["tipo_pago"] = "negocio"  # Permisos ilimitados para pruebas en modo sandbox
         return jsonify({"status": "success", "redirect": "/app"}), 200
     
     return jsonify({"status": "error", "message": "Credenciales inválidas de desarrollador."}), 401
@@ -167,8 +179,7 @@ def consultar():
     if not pregunta_usuario:
         return jsonify({"respuesta": "Por favor escribe una duda válida.", "voz_texto": "Por favor escribe una duda válida."}), 400
         
-    # Aquí es donde el Kernel procesa la llamada hacia OpenAI o Gemini utilizando tus llaves guardadas en Render
-    # Simulamos la integración nativa de la respuesta inteligente directa:
+    # El Kernel procesa la llamada hacia OpenAI o Gemini utilizando tus llaves guardadas en Render
     respuesta_ia = f"Asesoría de BolsilloLatino: Para tu duda sobre '{pregunta_usuario}', te sugerimos revisar los requisitos federales vigentes. Recuerda que operamos bajo la supervisión informativa de MAY ROGA LLC."
     
     return jsonify({
