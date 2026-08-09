@@ -86,7 +86,6 @@ function renderizarRespuestaLimpia(data) {
     if (cargaInicial) cargaInicial.style.display = "none";
     if (bloqueExplicativoBoton) bloqueExplicativoBoton.style.display = "none";
 
-    // Visualización en pantalla orientada en español claro para el usuario
     if (bloqueTextoVisual && data.respuesta) {
         bloqueTextoVisual.innerHTML = data.respuesta.replace(/\n/g, "<br>");
     }
@@ -97,8 +96,7 @@ function renderizarRespuestaLimpia(data) {
             data.botones.forEach(b => {
                 const btnEnlace = document.createElement("button");
                 btnEnlace.className = "print-btn";
-                // El botón especifica claramente que al guardar o imprimir se genera en inglés oficial de agencia
-                btnEnlace.innerText = b.texto + " (Guardar / Imprimir en Inglés Oficial)";
+                btnEnlace.innerText = b.text || b.texto;
 
                 btnEnlace.onclick = function() {
                     const descargasHoy = EngineState.getDownloadsToday();
@@ -114,17 +112,7 @@ function renderizarRespuestaLimpia(data) {
 
                     EngineState.incrementDownloads();
                     actualizarInterfazDeLimites();
-
-                    // TRUCO DE CONVERSIÓN OBLIGATORIA: Envía el parámetro para que el backend
-                    // entregue el documento listo en inglés con el formato original del gobierno.
-                    let urlFinalEnIngles = b.url;
-                    if (urlFinalEnIngles.includes('?')) {
-                        urlFinalEnIngles += "&format=official_english";
-                    } else {
-                        urlFinalEnIngles += "?format=official_english";
-                    }
-
-                    window.open(urlFinalEnIngles, '_blank');
+                    window.open(b.url, '_blank');
                 };
                 zonaBotones.appendChild(btnEnlace);
             });
@@ -136,7 +124,7 @@ function renderizarRespuestaLimpia(data) {
     if (data.voz_texto && window.speechSynthesis) {
         window.speechSynthesis.cancel();
         const mensajeAudio = new SpeechSynthesisUtterance(data.voz_texto);
-        mensajeAudio.lang = "es-US";
+        mensajeAudio.lang = "es-GT";
         window.speechSynthesis.speak(mensajeAudio);
     }
 }
@@ -155,4 +143,4 @@ function volverAlMenuDespejado() {
     if (bloqueExplicativoBoton) bloqueExplicativoBoton.style.display = "block";
 }
 
-console.log("BolsilloLatino core static JS engine initialized safely with automatic English official format on print/save.");
+console.log("BolsilloLatino core static JS engine initialized safely with Voice Record capabilities.");
