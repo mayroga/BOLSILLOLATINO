@@ -115,21 +115,21 @@
     </optgroup> 
     <optgroup label="🌎 Pasaportes y Consulados del Mundo Hispano"> 
      <option value="pasaporte_cu">Pasaporte de Cuba (Renovación Consular de Librito)</option> 
-     <option value="pasaporte_mx">Pasaporte y Matrícula Consular de México</option> 
-     <option value="pasaporte_ve">Pasaporte de Venezuela (Gestión SAIME)</option> 
-     <option value="pasaporte_co">Pasaporte de Colombia (Pre-Registro de Cancillería)</option> 
+     <option value="pasaporte_mx">Pasaporte e Identificación de México (Matrícula Consular)</option> 
+     <option value="pasaporte_ve">Pasaporte de Venezuela (Prórroga SAIME)</option> 
+     <option value="pasaporte_co">Pasaporte de Colombia (Registro Consular)</option> 
      <option value="pasaporte_ca">Pasaportes de Centroamérica y Caribe (Honduras, Nicaragua, Salvador, Dominicana)</option> 
     </optgroup> 
     <optgroup label="💸 Remesas, Envíos de Dinero y Finanzas"> 
-     <option value="western_union">Western Union - Enviar Remesas Familiares</option> 
-     <option value="remitly">Remitly - Transferencias Internacionales Directas</option> 
+     <option value="western_union">Western Union - Envíos de Dinero</option> 
+     <option value="remitly">Remitly - Transferencias Internacionales</option> 
     </optgroup> 
     <optgroup label="🚗 Tránsito, Licencias DMV y Facturas del Condado"> 
-     <option value="dmv_licencias">DMV - Sacar Licencia de Conducir y Título de Carros</option> 
-     <option value="pagos_facturas">Pago de Facturas del Hogar, Luz, Agua, Seguros y Tickets de Tránsito</option> 
+     <option value="dmv_licencias">DMV - Licencias de Conducir, Títulos y Registro de Carros</option> 
+     <option value="pagos_facturas">Pago de Facturas, Luz, Agua, Tickets de Tránsito y Seguros</option> 
     </optgroup> 
     <optgroup label="🏥 Salud Pública, Clínicas y Alimentos"> 
-     <option value="clinicas_seguros">Clínicas Médicas del Condado, Hospitales de Bajo Costo y Mercado de Salud</option> 
+     <option value="clinicas_seguros">Clínicas Médicas del Condado y Seguros de Salud</option> 
      </optgroup> 
     <optgroup label="✈️ Logística de Viajes y Transporte Local"> 
      <option value="transporte_viajes">Movilidad Total: Enlaces Oficiales de Uber, Lyft, Trenes y Aerolíneas</option> 
@@ -154,8 +154,8 @@
 
    <button id="btnEjecutarServicio" onclick="enviarTramiteSsuperApp()" style="font-size: 16px;">ABRIR PORTAL DIRECTO EN UN CLIC</button> 
 
-   <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO (SE QUEDA OCULTO POR DEFECTO) --> 
-   <div id="dev-login-box" class="card" style="display: none;"> 
+   <!-- PANEL DE CREDENCIALES DE DESARROLLADOR SEGURO --> 
+   <div id="dev-login-box" class="card" style="display: none; margin-top: 20px;"> 
     <p class="small" style="font-weight:bold; margin-bottom:10px; color:var(--danger);">MODO SANDBOX: ACCESO PROGRAMADOR</p> 
     <input id="devUser" type="text" placeholder="Usuario Oculto"> 
     <input id="devPass" type="password" placeholder="Contraseña Oculta" style="margin-top:5px;"> 
@@ -164,7 +164,7 @@
    </div> 
   </div> 
 
-  <!-- CORTINA LIMPIA DE ENFOQUE TOTAL ABSOLUTO (ESCONDE TODO EL FONDO CONTRA EL MIEDO) --> 
+  <!-- CORTINA LIMPIA DE ENFOQUE TOTAL --> 
   <div id="ventanaCortinaLimpia" class="card" style="display: none; border: 2px solid var(--primary); padding: 25px; text-align: center;"> 
    <h2 style="color: var(--success); font-size: 24px;">PORTAL SEGURO PREPARADO</h2> 
    <p class="small">RESOLUCIÓN FINAL SIN INTERMEDIARIOS NI TRABAS</p> 
@@ -177,7 +177,6 @@
 
 <script src="/static/js/engine.js"></script> 
 <script> 
- // FRASES BONITAS DE ACOMPAÑAMIENTO, ANTI-ESTRÉS Y DESCANSO (SIEMPRE DIFERENTES)
  const frasesApoyo = [
  "Estás en un lugar seguro. Respira profundo, relaja los hombros y tómate este momento para descansar la mente.",
  "Haces un gran esfuerzo cada día. Mantén la calma y la paz en tu corazón, estamos ordenando todo para ti.",
@@ -195,7 +194,6 @@
 
  const tipoPlanActual = sessionStorage.getItem("tipoPagoReal") || "evento"; 
 
- // CONTROL DE COBROS: SÓLO EL PLAN EVENTO SE CIERRA A LOS 20 MINUTOS
  if (tipoPlanActual === "evento") {
  const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000; 
  setTimeout(function() { 
@@ -205,7 +203,6 @@
  }, TIEMPO_RESTRINGIDO_EVENTO); 
  }
 
- // LÓGICA SECRETA: 3 CLICS EN EL TÍTULO PARA ABRIR EL LOG-IN DEL PROGRAMADOR
  let contadorClics = 0;
  function contarClicsDesarrollador() {
  contadorClics++;
@@ -223,9 +220,8 @@
 
  function conmutarBarra(idElemento) {
  const barra = document.getElementById(idElemento);
- // Escondemos las demás primero para mantener la pantalla despejada y limpia sin agobios
  document.querySelectorAll('.accordion-content').forEach(cont => {
-   if (cont.id !== idElemento) cont.style.display = 'none';
+    if (cont.id !== idElemento) cont.style.display = 'none';
  });
  barra.style.display = barra.style.display === "block" ? "none" : "block";
  }
@@ -242,7 +238,6 @@
  fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)]; 
  sessionStorage.setItem('ultimaFraseKamizen', fraseElegida); 
  
- // ESCONDEMOS CUALQUIER ELEMENTO QUE PUEDA ESTAR ARRIBA DE OTRO MOMENTÁNEAMENTE
  document.getElementById('cargaInicial').style.display = 'none'; 
  document.getElementById('bloqueExplicativoBoton').style.display = 'none'; 
  document.getElementById('textoApoyo').innerText = fraseElegida; 
@@ -254,7 +249,7 @@
  if (typeof actualizarInterfazDeLimites === 'function') {
  actualizarInterfazDeLimites(); 
  }
- }, 40000); // 40 segundos dedicados al acompañamiento mientras Render se despierta
+ }, 40000); 
  } 
 
  function enviarTramiteSsuperApp() { 
@@ -272,12 +267,12 @@
  } 
  alerta.style.display = "none"; 
  btn.disabled = true; 
- btn.innerText = "Abriendo pasarela de comunicación asíncrona..."; 
+ btn.innerText = "Abriendo pasarela de comunicación..."; 
  
- fetch('/tramites_locales', { 
+ fetch('/api/asistente', { 
  method: 'POST', 
  headers: { 'Content-Type': 'application/json' }, 
- body: JSON.stringify({ tramite: tramite, dpi: documento }) 
+ body: JSON.stringify({ mensaje: tramite, dpi: documento, idioma: "es" }) 
  }) 
  .then(response => response.json()) 
  .then(data => { 
@@ -305,14 +300,16 @@
  return;
  }
 
- fetch('/consultar', {
+ fetch('/api/asistente', {
  method: 'POST',
  headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ consulta: pregunta, dpi: documento })
+ body: JSON.stringify({ mensaje: pregunta, dpi: documento, idioma: "es" })
  })
  .then(response => response.json())
  .then(data => {
+ if (typeof renderizarRespuestaLimpia === 'function') {
  renderizarRespuestaLimpia(data);
+ }
  })
  .catch(err => alert("Error al conectar con el sistema."));
  }
@@ -352,6 +349,32 @@
  if (reconocimientoVoz) {
  reconocimientoVoz.stop();
  }
+ }
+
+ function ejecutarLoginDev(event) {
+ if (event) event.preventDefault();
+ const usuario = document.getElementById("devUser").value.trim();
+ const clave = document.getElementById("devPass").value.trim();
+ const alertaLogin = document.getElementById("mensajeAlertaLogin");
+
+ fetch('/login_dev', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ username: usuario, password: clave })
+ })
+ .then(response => response.json())
+ .then(data => {
+ if (data.status === "success") {
+ window.location.href = data.redirect;
+ } else {
+ alertaLogin.style.display = "block";
+ alertaLogin.innerText = data.message || "Credenciales incorrectas.";
+ }
+ })
+ .catch(err => {
+ alertaLogin.style.display = "block";
+ alertaLogin.innerText = "Error de conexión con el servidor.";
+ });
  }
  </script> 
 </body> 
