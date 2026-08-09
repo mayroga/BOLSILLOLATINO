@@ -81,36 +81,56 @@
  </div> 
  </div> 
  </div> 
+
  <script src="/static/js/engine.js"></script> 
  <script> 
+ // =========================================================
+ // BANCO DE FRASES DE APOYO PSICOLÓGICO OBLIGATORIO
+ // =========================================================
+ const frasesApoyo = [
+ "Tu paciencia es tu mayor virtud hoy. Todo gran proceso toma un momento para iniciar.",
+ "Respira profundo. Estás tomando el control de tus metas y eso ya es un paso importante.",
+ "El éxito no lleva prisa. Estamos ordenando tu entorno para que todo salga perfecto.",
+ "Mantén la mente en calma, la tranquilidad abre todas las puertas al conocimiento.",
+ "Un momento de espera en silencio fortalece tu autodisciplina y tu enfoque mental.",
+ "Estás haciendo las cosas bien. En menos de un minuto tendrás el control en tus manos.",
+ "La seguridad y la claridad requieren su tiempo. Gracias por tu valiosa constancia.",
+ "Relaja los hombros y respira. Tu sesión se está configurando de forma segura.",
+ "Cada segundo de espera es un espacio de meditación para iniciar con máxima potencia.",
+ "Estás usando un sistema diseñado para tu crecimiento. Tu espacio seguro se está activando.",
+ "La paciencia es una habilidad de campeones. El sistema ya casi está listo.",
+ "No te dejes agobiar por el tiempo, el servidor está haciendo el trabajo pesado por ti hoy."
+ ];
+
+ // Respaldo local de la variable del plan por si no ha cargado engine.js a tiempo
+ const tipoPlanActual = sessionStorage.getItem("tipoPagoReal") || "evento"; 
+
  // CONTROL DE LOS DOS COBROS POR MODELO DE TIEMPO (MÁXIMO 20 MINUTOS POST-PAGO) 
- if (typeof EngineState !== 'undefined' && EngineState.currentPlan === "evento") { 
+ if (tipoPlanActual === "evento") {
  const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000; 
  setTimeout(function() { 
  alert("Su tiempo de sesión de 20 minutos para el Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o de negocio."); 
  sessionStorage.clear(); 
  location.reload(); 
  }, TIEMPO_RESTRINGIDO_EVENTO); 
- } else if (typeof tipoPlanActual !== 'undefined' && tipoPlanActual === "evento") {
- const TIEMPO_RESTRINGIDO_EVENTO = 20 * 60 * 1000; 
- setTimeout(function() { 
- alert("Su tiempo de sesión de 20 minutos para el Plan Evento ha caducado. Para reingresar ilimitadamente adquiera una suscripción mensual o de negocio."); 
- sessionStorage.clear(); 
- location.reload(); 
- }, TIEMPO_RESTRINGIDO_EVENTO);
  }
+
  function iniciarDespertarYApoyo(event) { 
  if (event) event.preventDefault(); 
  fetch('/ping').catch(err => console.log("Llamando al servidor...")); 
+ 
  let fraseElegida = ""; 
  const ultimaFrase = sessionStorage.getItem('ultimaFraseKamizen'); 
  let opcionesDisponibles = frasesApoyo.filter(f => f !== ultimaFrase); 
  if (opcionesDisponibles.length === 0) opcionesDisponibles = frasesApoyo; 
+ 
  fraseElegida = opcionesDisponibles[Math.floor(Math.random() * opcionesDisponibles.length)]; 
  sessionStorage.setItem('ultimaFraseKamizen', fraseElegida); 
+ 
  document.getElementById('cargaInicial').style.display = 'none'; 
  document.getElementById('textoApoyo').innerText = fraseElegida; 
  document.getElementById('pantallaApoyo').style.display = 'block'; 
+ 
  setTimeout(function() { 
  document.getElementById('pantallaApoyo').style.display = 'none'; 
  document.getElementById('panelHerramientas').style.display = 'block'; 
@@ -119,6 +139,7 @@
  }
  }, 40000); // 40 segundos exactos para calentar Render 
  } 
+
  function enviarTramiteSsuperApp() { 
  const selector = document.getElementById("selectorTramite"); 
  const inputDoc = document.getElementById("inputDocumento"); 
@@ -126,6 +147,7 @@
  const btn = document.getElementById("btnEjecutarServicio"); 
  const tramite = selector.value; 
  const documento = inputDoc.value.trim(); 
+ 
  // VALIDACIÓN COMPLETAMENTE PACIENTE 
  if (documento === "") { 
  alerta.innerText = "¡Atención! Te hace falta completar el número de documento para que la aplicación pueda caminar."; 
@@ -135,6 +157,7 @@
  alerta.style.display = "none"; 
  btn.disabled = true; 
  btn.innerText = "Abriendo pasarela de comunicación asíncrona..."; 
+ 
  fetch('/tramites_locales', { 
  method: 'POST', 
  headers: { 'Content-Type': 'application/json' }, 
